@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "author": "Vinicius",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "sensorExt", "top": -150, "left": -100, "attrs": { "distance": "100" } },
+    { "type": "wokwi-hc-sr04", "id": "sensorInt", "top": -150, "left": 150, "attrs": { "distance": "100" } },
+    { "type": "wokwi-servo", "id": "servo1", "top": 120, "left": 120, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:GND.1", "sensorExt:GND", "black", [ "v0" ] ],
+    [ "esp:3V3", "sensorExt:VCC", "red", [ "v0" ] ],
+    [ "esp:D5", "sensorExt:TRIG", "blue", [ "v0" ] ],
+    [ "esp:D18", "sensorExt:ECHO", "green", [ "v0" ] ],
+    
+    [ "esp:GND.1", "sensorInt:GND", "black", [ "v0" ] ],
+    [ "esp:3V3", "sensorInt:VCC", "red", [ "v0" ] ],
+    [ "esp:D19", "sensorInt:TRIG", "purple", [ "v0" ] ],
+    [ "esp:D21", "sensorInt:ECHO", "orange", [ "v0" ] ],
+
+    [ "esp:GND.1", "servo1:GND", "black", [ "v0" ] ],
+    [ "esp:D13", "servo1:PWM", "orange", [ "v0" ] ],
+    [ "esp:5V", "servo1:VCC", "red", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
