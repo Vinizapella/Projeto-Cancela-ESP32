@@ -14,6 +14,7 @@ const int trigExt = 5, echoExt = 18;
 const int trigInt = 19, echoInt = 21;
 const int pinoServo = 13;
 const int distDeteccao = 50;
+const int pinoBotao = 4; 
 int estado = 0; 
 
 long lerDistancia(int trig, int echo) {
@@ -40,9 +41,24 @@ void reconnect() {
     Serial.print("Tentando MQTT...");
     if (client.connect("ESP32_Cancela_Zapella")) { 
       Serial.println(" Conectado ao Broker!");
+      client.subscribe("cancela/comando");
     } else {
       delay(5000);
     }
+  }
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  String msg;
+  for (int i = 0; i < length; i++) { msg += (char)payload[i]; }
+
+  if (msg == "ABRIR") {
+    Serial.println("Comando Remoto: Abrindo Cancela");
+    cancela.write(90);
+    client.publish("cancela/status", "Aberta Manualmente");
+    delay(3000); 
+    cancela.write(0);
+    client.publish("cancela/status", "Livre");
   }
 }
 
@@ -50,7 +66,8 @@ void setup() {
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
-  
+  client.setCallback(callback);
+  pinMode(pinoBotao, INPUT_PULLUP);
   cancela.attach(pinoServo);
   cancela.write(0);
   pinMode(trigExt, OUTPUT); pinMode(echoExt, INPUT);
@@ -60,6 +77,15 @@ void setup() {
 void loop() {
   if (!client.connected()) reconnect();
   client.loop();
+
+  if (digitalRead(pinoBotao) == LOW) { 
+    Serial.println("Botão Físico: Abrindo...");
+    client.publish("cancela/status", "Abertura Manual (Wokwi)");
+    cancela.write(90);
+    delay(3000); 
+    cancela.write(0);
+    client.publish("cancela/status", "Livre");
+  }
 
   long dExt = lerDistancia(trigExt, echoExt);
   long dInt = lerDistancia(trigInt, echoInt);

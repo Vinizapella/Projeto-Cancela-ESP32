@@ -4,24 +4,70 @@
   "editor": "wokwi",
   "parts": [
     { "type": "board-esp32-devkit-v1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
-    { "type": "wokwi-hc-sr04", "id": "sensorExt", "top": -150, "left": -100, "attrs": { "distance": "100" } },
-    { "type": "wokwi-hc-sr04", "id": "sensorInt", "top": -150, "left": 150, "attrs": { "distance": "100" } },
-    { "type": "wokwi-servo", "id": "servo1", "top": 120, "left": 120, "attrs": {} }
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "sensorExt",
+      "top": -150,
+      "left": -100,
+      "attrs": { "distance": "100" }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "sensorInt",
+      "top": -150,
+      "left": 150,
+      "attrs": { "distance": "100" }
+    },
+    { "type": "wokwi-servo", "id": "servo1", "top": 120, "left": 120, "attrs": {} },
+    { "type": "board-esp32-devkit-v1", "id": "esp1", "top": 0, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_manual1",
+      "top": 100,
+      "left": -150,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "sensorExt1",
+      "top": -152.1,
+      "left": -100.1,
+      "attrs": { "distance": "100" }
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "sensorInt1",
+      "top": -150,
+      "left": 150,
+      "attrs": { "distance": "100" }
+    },
+    { "type": "wokwi-servo", "id": "servo2", "top": 122.8, "left": 115.2, "attrs": {} }
   ],
   "connections": [
     [ "esp:GND.1", "sensorExt:GND", "black", [ "v0" ] ],
     [ "esp:3V3", "sensorExt:VCC", "red", [ "v0" ] ],
     [ "esp:D5", "sensorExt:TRIG", "blue", [ "v0" ] ],
     [ "esp:D18", "sensorExt:ECHO", "green", [ "v0" ] ],
-    
     [ "esp:GND.1", "sensorInt:GND", "black", [ "v0" ] ],
     [ "esp:3V3", "sensorInt:VCC", "red", [ "v0" ] ],
     [ "esp:D19", "sensorInt:TRIG", "purple", [ "v0" ] ],
     [ "esp:D21", "sensorInt:ECHO", "orange", [ "v0" ] ],
-
     [ "esp:GND.1", "servo1:GND", "black", [ "v0" ] ],
     [ "esp:D13", "servo1:PWM", "orange", [ "v0" ] ],
-    [ "esp:5V", "servo1:VCC", "red", [ "v0" ] ]
+    [ "esp:5V", "servo1:VCC", "red", [ "v0" ] ],
+    [ "esp1:GND.1", "sensorExt1:GND", "black", [ "v0" ] ],
+    [ "esp1:3V3", "sensorExt1:VCC", "red", [ "v0" ] ],
+    [ "esp1:D5", "sensorExt1:TRIG", "blue", [ "v0" ] ],
+    [ "esp1:D18", "sensorExt1:ECHO", "green", [ "v0" ] ],
+    [ "esp1:GND.1", "sensorInt1:GND", "black", [ "v0" ] ],
+    [ "esp1:3V3", "sensorInt1:VCC", "red", [ "v0" ] ],
+    [ "esp1:D19", "sensorInt1:TRIG", "purple", [ "v0" ] ],
+    [ "esp1:D21", "sensorInt1:ECHO", "orange", [ "v0" ] ],
+    [ "esp1:GND.1", "servo2:GND", "black", [ "v0" ] ],
+    [ "esp1:D13", "servo2:PWM", "orange", [ "v0" ] ],
+    [ "esp1:5V", "servo2:VCC", "red", [ "v0" ] ],
+    [ "esp1:GND.1", "btn_manual1:1.L", "black", [ "v0" ] ],
+    [ "esp1:D4", "btn_manual1:2.R", "green", [ "v0" ] ]
   ],
   "dependencies": {}
 }
