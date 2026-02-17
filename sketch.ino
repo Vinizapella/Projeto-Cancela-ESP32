@@ -1,12 +1,19 @@
+#include <WiFi.h>
+#include <PubSubClient.h>
 #include <ESP32Servo.h>
+
+const char* ssid = "Wokwi-GUEST"; 
+const char* password = "";
+const char* mqtt_server = "broker.hivemq.com"; 
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+Servo cancela;
 
 const int trigExt = 5, echoExt = 18;
 const int trigInt = 19, echoInt = 21;
 const int pinoServo = 13;
 const int distDeteccao = 50;
-
-Servo cancela;
-
 int estado = 0; 
 
 long lerDistancia(int trig, int echo) {
@@ -18,53 +25,76 @@ long lerDistancia(int trig, int echo) {
   return (d <= 0) ? 400 : d;
 }
 
+void setup_wifi() {
+  delay(10);
+  Serial.print("Conectando WiFi...");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500); Serial.print(".");
+  }
+  Serial.println(" Conectado!");
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    Serial.print("Tentando MQTT...");
+    if (client.connect("ESP32_Cancela_Zapella")) { 
+      Serial.println(" Conectado ao Broker!");
+    } else {
+      delay(5000);
+    }
+  }
+}
+
 void setup() {
   Serial.begin(115200);
+  setup_wifi();
+  client.setServer(mqtt_server, 1883);
+  
   cancela.attach(pinoServo);
   cancela.write(0);
   pinMode(trigExt, OUTPUT); pinMode(echoExt, INPUT);
   pinMode(trigInt, OUTPUT); pinMode(echoInt, INPUT);
-  Serial.println("SISTEMA PRONTO: Aguardando aproximação...");
 }
 
 void loop() {
+  if (!client.connected()) reconnect();
+  client.loop();
+
   long dExt = lerDistancia(trigExt, echoExt);
   long dInt = lerDistancia(trigInt, echoInt);
 
   if (estado == 0) {
     if (dExt < distDeteccao) {
-      Serial.println("Carro detectado por FORA. Abrindo...");
+      Serial.println("Entrada Detectada");
+      client.publish("cancela/status", "Carro Entrando"); 
       cancela.write(90);
       estado = 1; 
     } 
     else if (dInt < distDeteccao) {
-      Serial.println("Carro detectado por DENTRO. Abrindo...");
+      Serial.println("Saída Detectada");
+      client.publish("cancela/status", "Carro Saindo");
       cancela.write(90);
       estado = 2; 
     }
   }
-
   else if (estado == 1) {
     if (dInt < distDeteccao) {
-      Serial.println("Carro passando pelo sensor interno...");
       while(lerDistancia(trigInt, echoInt) < distDeteccao) { delay(100); }
-      Serial.println("Passagem concluída. Fechando...");
+      client.publish("cancela/status", "Livre - Entrada Concluída");
       delay(1000); 
       cancela.write(0);
       estado = 0;
     }
   }
-
   else if (estado == 2) {
     if (dExt < distDeteccao) {
-      Serial.println("Carro passando pelo sensor externo...");
       while(lerDistancia(trigExt, echoExt) < distDeteccao) { delay(100); }
-      Serial.println("Saída concluída. Fechando...");
+      client.publish("cancela/status", "Livre - Saída Concluída");
       delay(1000);
       cancela.write(0);
       estado = 0;
     }
   }
-
   delay(50);
 }
