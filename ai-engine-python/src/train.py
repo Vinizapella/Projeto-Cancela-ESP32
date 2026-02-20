@@ -60,7 +60,6 @@ def treinar():
             modelo = RandomForestRegressor(n_estimators=100, random_state=42)
             modelo.fit(X, y)
 
-        # 7. Salvando o modelo treinado (.pkl)
         os.makedirs('../models', exist_ok=True)
         caminho_salvar = os.path.join('..', 'models', 'modelo_cancela.pkl')
         joblib.dump(modelo, caminho_salvar)
