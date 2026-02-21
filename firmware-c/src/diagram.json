@@ -3,52 +3,28 @@
   "editor": "wokwi",
   "parts": [
     { "type": "board-esp32-devkit-v1", "id": "esp1", "top": 210, "left": 160, "attrs": {} },
-    {
-      "type": "wokwi-pushbutton",
-      "id": "btn_manual1",
-      "top": 330,
-      "left": 10,
-      "attrs": { "color": "green" }
-    },
-    {
-      "type": "wokwi-hc-sr04",
-      "id": "sensorExt1",
-      "top": 60,
-      "left": 60,
-      "attrs": { "distance": "100" }
-    },
-    {
-      "type": "wokwi-hc-sr04",
-      "id": "sensorInt1",
-      "top": 60,
-      "left": 310,
-      "attrs": { "distance": "100" }
-    },
+    { "type": "wokwi-hc-sr04", "id": "sensor_ext1", "top": 60, "left": 60, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "sensor_int1", "top": 60, "left": 310, "attrs": {} },
     { "type": "wokwi-servo", "id": "servo1", "top": 360, "left": 310, "attrs": {} },
-    {
-      "type": "wokwi-buzzer",
-      "id": "buzzer1",
-      "top": 390,
-      "left": 110,
-      "attrs": { "volume": "0.1" }
-    }
+    { "type": "wokwi-pushbutton", "id": "btn1", "top": 310, "left": 10, "attrs": {} },
+    { "type": "wokwi-buzzer", "id": "bz1", "top": 410, "left": 110, "attrs": {} }
   ],
   "connections": [
-    [ "esp1:GND.1", "sensorExt1:GND", "black", [ "v0" ] ],
-    [ "esp1:3V3", "sensorExt1:VCC", "red", [ "v0" ] ],
-    [ "esp1:D5", "sensorExt1:TRIG", "blue", [ "v0" ] ],
-    [ "esp1:D18", "sensorExt1:ECHO", "green", [ "v0" ] ],
-    [ "esp1:GND.1", "sensorInt1:GND", "black", [ "v0" ] ],
-    [ "esp1:3V3", "sensorInt1:VCC", "red", [ "v0" ] ],
-    [ "esp1:D19", "sensorInt1:TRIG", "purple", [ "v0" ] ],
-    [ "esp1:D21", "sensorInt1:ECHO", "orange", [ "v0" ] ],
+    [ "esp1:GND.1", "sensor_ext1:GND", "black", [ "v0" ] ],
+    [ "esp1:GND.1", "sensor_int1:GND", "black", [ "v0" ] ],
+    [ "esp1:VIN", "sensor_ext1:VCC", "red", [ "v0" ] ],
+    [ "esp1:VIN", "sensor_int1:VCC", "red", [ "v0" ] ],
+    [ "esp1:D5", "sensor_ext1:TRIG", "green", [ "v0" ] ],
+    [ "esp1:D18", "sensor_ext1:ECHO", "blue", [ "v0" ] ],
+    [ "esp1:D19", "sensor_int1:TRIG", "purple", [ "v0" ] ],
+    [ "esp1:D21", "sensor_int1:ECHO", "orange", [ "v0" ] ],
+    [ "esp1:D13", "servo1:PWM", "yellow", [ "v0" ] ],
     [ "esp1:GND.1", "servo1:GND", "black", [ "v0" ] ],
-    [ "esp1:D13", "servo1:PWM", "orange", [ "v0" ] ],
-    [ "esp1:5V", "servo1:VCC", "red", [ "v0" ] ],
-    [ "esp1:GND.1", "btn_manual1:1.L", "black", [ "v0" ] ],
-    [ "esp1:D4", "btn_manual1:2.R", "green", [ "v0" ] ],
-    [ "esp1:GND.1", "buzzer1:GND", "black", [ "v0" ] ],
-    [ "esp1:D25", "buzzer1:SIG", "red", [ "v0" ] ]
+    [ "esp1:VIN", "servo1:VCC", "red", [ "v0" ] ],
+    [ "esp1:D4", "btn1:1.a", "green", [ "v0" ] ],
+    [ "esp1:GND.1", "btn1:2.a", "black", [ "v0" ] ],
+    [ "esp1:D25", "bz1:1", "red", [ "v0" ] ],
+    [ "esp1:GND.1", "bz1:2", "black", [ "v0" ] ]
   ],
   "dependencies": {}
 }

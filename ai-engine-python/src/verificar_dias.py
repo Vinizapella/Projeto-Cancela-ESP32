@@ -10,7 +10,6 @@ def verificar():
     db = client[os.getenv("DATABASE_NAME")]
     colecao = db[os.getenv("COLLECTION_NAME")]
 
-    # Busca apenas o campo 'data' de todos os documentos
     dados = list(colecao.find({}, {"data": 1, "_id": 0}))
     
     if not dados:
