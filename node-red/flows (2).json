@@ -1,0 +1,22 @@
+[
+    {
+        "id": "b5db5f67f738e9d6",
+        "type": "function",
+        "z": "88c1999468441eee",
+        "name": "function 1",
+        "func": "var agora = new Date();\n\nvar dataISO = agora.toISOString();\n\nvar dataPTBR = agora.toLocaleString('pt-BR');\n\nmsg.payload = {\n    evento: msg.payload,\n    data: dataISO, \n    data_formatada: dataPTBR, \n    hora: agora.getHours(),\n    dispositivo: \"ESP32_Cancela_Zapella\"\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 480,
+        "wires": [
+            [
+                "96f824a3659d81f2"
+            ]
+        ]
+    }
+]

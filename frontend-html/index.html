@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Controle de Cancela</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans p-6">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-700">Sistema IoT - Estacionamento</h1>
+            <button onclick="carregarDados()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow">
+                Atualizar Agora
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-green-500">
+                <h2 class="text-gray-500 text-sm font-bold uppercase tracking-wide">Vagas Disponíveis</h2>
+                <p id="vagas-count" class="text-4xl font-black text-gray-800 mt-2">--</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
+                <h2 class="text-gray-500 text-sm font-bold uppercase tracking-wide">Total de Entradas</h2>
+                <p id="entradas-count" class="text-4xl font-black text-gray-800 mt-2">--</p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 border-l-4 border-red-500">
+                <h2 class="text-gray-500 text-sm font-bold uppercase tracking-wide">Total de Saídas</h2>
+                <p id="saidas-count" class="text-4xl font-black text-gray-800 mt-2">--</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-blue-50 px-6 py-4 border-b border-blue-100">
+                    <h3 class="text-lg font-bold text-blue-800">Últimas Entradas</h3>
+                </div>
+                <div class="p-6 h-96 overflow-y-auto">
+                    <ul id="lista-entradas" class="divide-y divide-gray-200">
+                        <li class="py-3 text-gray-500">Carregando dados...</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="bg-red-50 px-6 py-4 border-b border-red-100">
+                    <h3 class="text-lg font-bold text-red-800">Últimas Saídas</h3>
+                </div>
+                <div class="p-6 h-96 overflow-y-auto">
+                    <ul id="lista-saidas" class="divide-y divide-gray-200">
+                        <li class="py-3 text-gray-500">Carregando dados...</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js">    </script>
+</body>
+</html>
