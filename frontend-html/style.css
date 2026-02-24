@@ -5,6 +5,7 @@ body {
     padding: 0;
     background-color: #121212;
     display: flex;
+    margin-left: 40px;
 }
 
 header {
@@ -17,6 +18,7 @@ header {
     margin: 35px;
     padding: 30px 0; 
     box-sizing: border-box;
+    margin-right: 70px;
 }
 
 .division-header {
@@ -69,17 +71,20 @@ header {
 .profile-img {
     width: 70px; 
     height: 70px;
-    border-radius: 50%; /* */
+    border-radius: 50%; 
     background-size: cover;
     background-position: center;
     border: 3px solid #333;
 }
 
 
+main{
+    display: flex;
+    width: 1900px;
+}
 
-
-main {
-    height: 60px;
+.main-content {
+    height: 70px;
     width: 570px;
     margin-top: 35px;
     background: linear-gradient(-145deg, transparent 20%, #1f1f1f 20.5%);
@@ -387,3 +392,142 @@ h1 {
     background-color: #e5ff5c;
 }
     
+.main-right-right {
+    position: relative; 
+    background-color: #1f1f1f;
+    color: white;
+    margin-left: 320px;
+    border-radius: 20px;
+    width: 780px;
+    height: 846px;
+    margin-top: 35px;
+    overflow: hidden; 
+}
+
+.image-entrada {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 20px;
+    display: block;
+}
+
+.gauge-wrapper {
+    position: absolute; 
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 40%;           
+    left: 20%;          
+    transform: translate(-50%, -50%); 
+    z-index: 10;        
+}
+
+.gauge-wrapper-2 {
+    position: absolute; 
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    top: 40%;           
+    left: 80%;          
+    transform: translate(-50%, -50%); 
+    z-index: 10;        
+}
+
+.gauge-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 5px rgba(215, 255, 0, 0.5));
+}
+
+.gauge-track {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 1.5; 
+    stroke-linecap: round;
+}
+
+.gauge-fill {
+    fill: none;
+    stroke: #d7ff00;
+    stroke-linecap: round;
+    stroke-dasharray: 165; 
+    stroke-dashoffset: 58;
+}
+
+.gauge-content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    color: white;
+}
+
+.label {
+    font-size: 16px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    padding-bottom: 1px;
+}
+
+.value {
+    font-size: 65px; 
+    color: #d7ff00;
+    line-height: 0.8;
+    text-shadow: 0 0 15px rgba(215, 255, 0, 0.6);
+}
+
+.unit {
+    font-size: 22px;
+    font-weight: 500;
+    opacity: 0.7;
+    letter-spacing: 1px;
+}
+
+
+
+
+.gate-header {
+    position: absolute;
+    top: 30px;      
+    left: 40px;     
+    display: flex;
+    align-items: center;
+    gap: 15px;      
+    z-index: 20;    
+}
+
+.gate-icon {
+    width: 45px;
+    height: 45px;
+}
+
+.gate-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.gate-title {
+    color: #d7ff00; 
+    font-size: 40px;
+    margin: 0;
+    text-shadow: 0 0 15px rgba(215, 255, 0, 0.5);
+}
+
+.gate-subtitle {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 400;
+    margin: 0;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+}
