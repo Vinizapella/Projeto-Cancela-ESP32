@@ -97,9 +97,9 @@
                 <div class="access-status-container">
                     <div class="status-text">
                         <span>Status</span>
-                        <h2 class="status-authorized">Entrada</h2>
+                        <h2 id="status-display" class="status-authorized">Entrada</h2>
                     </div>
-                    <button class="btn-raise">Trocar Status</button>
+                    <button id="btn-trocar-status" class="btn-raise">Trocar Status</button>
                 </div>
                 
             </div>
@@ -113,7 +113,7 @@
                 </svg>
                 
                 <div class="gate-text">
-                    <h1 class="gate-title">Entradas</h1>
+                    <h1 id="gate-title" class="gate-title">Entradas</h1>
                     <p class="gate-subtitle">Hoje</p>
                 </div>
             </div>
@@ -123,10 +123,10 @@
                     <path class="gauge-fill" d="M 22 78 A 38 38 0 1 1 78 78" />
                 </svg>
                 
-                
+
                 <div class="gauge-content">
                     <span class="label">Vagas disponíveis</span>
-                    <span class="value">700</span>
+                    <span id="vagas-count" class="value">---</span>
                 </div>
             </div>
             <div class="gauge-wrapper-2">
@@ -136,8 +136,8 @@
                 </svg>
                 
                 <div class="gauge-content">
-                    <span class="label">Entradas hoje</span>
-                    <span class="value">923</span>
+                    <span id="count-label" class="label">Entradas hoje</span>
+                    <span id="eventos-count" class="value">---</span>
                 </div>
             </div>
         </section>
