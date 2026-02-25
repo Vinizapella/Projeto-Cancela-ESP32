@@ -12,6 +12,58 @@ let indicePeriodo = 0;
 const btnPrev = document.getElementById('btn-prev-period');
 const btnNext = document.getElementById('btn-next-period');
 const periodDisplay = document.getElementById('current-period-display');
+let turnoSelecionado = "Matutino"; 
+let horarioSelecionado = null;
+const botoesTurno = document.querySelectorAll('#Matutino, #Vespertino, #Noturno');
+
+botoesTurno.forEach(botao => {
+    botao.addEventListener('click', () => {
+        botoesTurno.forEach(b => {
+            b.classList.remove('active');
+            b.classList.add('btn-inactive');
+        });
+
+        botao.classList.add('active');
+        botao.classList.remove('btn-inactive');
+
+        horarioSelecionado = null;
+        document.querySelectorAll('.btn-hour').forEach(bh => {
+            bh.classList.remove('active-hour'); 
+            bh.style.backgroundColor = "#ffffff"; 
+        });
+
+        turnoSelecionado = botao.innerText;
+        console.log("Turno alterado para:", turnoSelecionado);
+        
+        carregarDados(); 
+    });
+});
+
+const botoesHora = document.querySelectorAll('.btn-hour');
+
+botoesHora.forEach(botao => {
+    botao.addEventListener('click', () => {
+        const colunaDoHorario = botao.closest('.shift-column');
+        const turnoAtivo = document.querySelector('.btn-pill.active');
+
+        if (!colunaDoHorario.contains(turnoAtivo)) {
+            alert(`Atenção: O horário ${botao.innerText} não pertence ao turno ${turnoAtivo.innerText}!`);
+            return; 
+        }
+
+        if (botao.classList.contains('active-hour')) {
+            botao.classList.remove('active-hour');
+            horarioSelecionado = null;
+        } else {
+            botoesHora.forEach(b => b.classList.remove('active-hour'));
+            botao.classList.add('active-hour');
+            horarioSelecionado = botao.innerText;
+        }
+
+        console.log("Horário filtrado:", horarioSelecionado);
+        carregarDados();
+    });
+});
 
 
 btnPrev.addEventListener('click', () => {

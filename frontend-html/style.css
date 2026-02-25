@@ -195,9 +195,9 @@ h1 {
     font-size: 18px;
 }
 
-.btn-morning.active {
-    background-color: #d7ff00; 
-    color: black;
+.btn-pill.active {
+    background-color: #d7ff00 !important; 
+    color: black !important;
 }
 
 .btn-inactive {
@@ -206,8 +206,9 @@ h1 {
 }
 
 .btn-hour {
-    background-color: #ffffff; 
-    color: black;
+    background-color: #ffffff !important;
+    color: black !important;
+    border: none;
 }
 
 .btn-pill:hover {
@@ -218,6 +219,11 @@ h1 {
     display: flex;
     align-items: center;
     background-color: transparent;
+}
+
+.btn-hour.active-hour {
+    background-color: #d7ff00 !important;
+    color: black !important;
 }
 
 .btn-nav {
