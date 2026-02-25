@@ -1,3 +1,14 @@
+const scrollTexto = document.getElementById('lista-notificacoes-texto');
+const scrollIcones = document.getElementById('lista-notificacoes-icones');
+
+scrollTexto.addEventListener('scroll', () => {
+    scrollIcones.scrollTop = scrollTexto.scrollTop;
+});
+
+scrollIcones.addEventListener('scroll', () => {
+    scrollTexto.scrollTop = scrollIcones.scrollTop;
+});
+
 const API_URL = 'http://localhost:8080/api/estacionamento';
 let modoAtual = 'entrada';
 
@@ -43,3 +54,5 @@ async function carregarDados() {
 }
 
 window.onload = carregarDados;
+
+
