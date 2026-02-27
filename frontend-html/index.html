@@ -8,6 +8,7 @@
 </head>
 <body>
 
+
     <header class="header">
         <div class="division-header">
             <div class="header-top">
@@ -24,48 +25,55 @@
         </div>
     </header>
 
+
     <main class="main">
         <div class="main-content">
             <div class="main-left-area">
                 <h1>Controle de Acesso Cancela</h1>
-                
+               
                 <section class="main-left">
                     <div class="main-options">
                         <div class="option">
                             <button class="button-time">Horários</button>
-                            <button class="button-ia">Previsor IA</button>
+                            <button onclick="baixarRelatorio()" class="button-ia">Baixar CSV </button>
+                            <button id="btn-refresh" class="btn-pill" style="background: #d7ff00; color: #000; font-weight: bold; border: none; padding: 5px 15px; cursor: pointer;">
+    🔄 Atualizar Agora
+</button>
                         </div>
                     </div>
+
 
                     <div class="main-time-section">
                         <div class="title-time">
                             <span>Selecione o Turno</span>
                             <div class="selection-options">
-                                <button class="btn-nav">&lt;</button>
-                                <span class="date-display">Hoje</span>
-                                <button class="btn-nav">&gt;</button>
+                                <button id="btn-prev-period" class="btn-nav">&lt;</button>
+                                <p id="display-periodo-card" class="gate-subtitle">Hoje</p>
+                                <button id="btn-next-period" class="btn-nav">&gt;</button>
                             </div>
                         </div>
 
+
                         <div class="shift-grid">
                             <div class="shift-column">
-                                <button class="btn-pill btn-morning active">Matutino</button>
-                                <button class="btn-pill btn-hour">06:00-14:00</button>
-                                <button class="btn-pill btn-hour">16:00-12:00</button>
+                                <button class="btn-pill btn-morning active" id="Matutino">Matutino</button>
+                                <button class="btn-pill btn-hour btn-hour-filter">06:00-14:00</button>
+                                <button class="btn-pill btn-hour btn-hour-filter">16:00-12:00</button>
                             </div>
                             <div class="shift-column">
-                                <button class="btn-pill btn-inactive">Vespertino</button>
-                                <button class="btn-pill btn-hour">14:00-22:00</button>
-                                <button class="btn-pill btn-hour">19:00-02:00</button>
+                                <button class="btn-pill btn-inactive" id="Vespertino">Vespertino</button>
+                                <button class="btn-pill btn-hour btn-hour-filter">14:00-22:00</button>
+                                <button class="btn-pill btn-hour btn-hour-filter">19:00-02:00</button>
                             </div>
                             <div class="shift-column">
-                                <button class="btn-pill btn-inactive">Noturno</button>
-                                <button class="btn-pill btn-hour">22:00-06:00</button>
+                                <button class="btn-pill btn-inactive" id="Noturno">Noturno</button>
+                                <button class="btn-pill btn-hour btn-hour-filter">22:00-06:00</button>
                             </div>
                         </div>
                     </div>
                 </section>
             </div>
+
 
             <div class="main-right-area">
                 <section class="main-right">
@@ -73,7 +81,10 @@
                         <h2>Últimas Notificações</h2>
                     </div>
                     <div class="verification-container">
-                        <div class="header-left-notifications">
+
+
+                        <!-- Com a API rodando essa parte toda pode ser apagada deixando somente a div principal de cada uma -->
+                        <div id="lista-notificacoes-texto" class="header-left-notifications">
                             <div class="employee-row">
                                 <span>Entrada por botão físico</span>
                                 <span class="notif-time">20/02/2026 10:30 AM</span>
@@ -86,63 +97,93 @@
                                 <span>Entrada</span>
                                 <span class="notif-time">20/02/2026 10:25 AM</span>
                             </div>
+                            <div class="employee-row">
+                                <span>Entrada</span>
+                                <span class="notif-time">20/02/2026 10:25 AM</span>
+                            </div>
                         </div>
-                        <div class="header-right-notifications">
+                        <!-- Com a API rodando essa parte toda pode ser apagada deixando somente a div principal de cada uma -->
+                        <div id="lista-notificacoes-icones" class="header-right-notifications">
                             <div class="side-icon-item"><img src="caminhao.png"></div>
                             <div class="side-icon-item"><img src="caminhao.png"></div>
                             <div class="side-icon-item"><img src="carro.png"></div>
+                            <div class="side-icon-item"><img src="carro.png"></div>
                         </div>
+                       
                     </div>
                 </section>
                 <div class="access-status-container">
                     <div class="status-text">
                         <span>Status</span>
-                        <h2 class="status-authorized">Entrada</h2>
+                        <h2 id="status-display" class="status-authorized">Entrada</h2>
                     </div>
-                    <button class="btn-raise">Trocar Status</button>
+                    <button id="btn-trocar-status" class="btn-raise">Trocar Status</button>
                 </div>
-                
+               
             </div>
         </div>    
         <section class="main-right-right">
             <img class="image-entrada" src="Captura de tela 2026-02-24 104833.png" alt="Gráfico de Acessos">
+           
             <div class="gate-header">
                 <svg class="gate-icon" viewBox="0 0 24 24" fill="none" stroke="#d7ff00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="9 10 4 15 9 20"></polyline>
                     <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
                 </svg>
-                
                 <div class="gate-text">
-                    <h1 class="gate-title">Entradas</h1>
-                    <p class="gate-subtitle">Hoje</p>
+                    <h1 id="gate-title" class="gate-title">Entradas</h1>
+                    <p id="display-periodo-card" class="gate-subtitle">Hoje</p>
                 </div>
             </div>
+
+
+            <div class="turnos-resumo-container" style="display: flex; gap: 10px; margin-bottom: 20px; color: white; font-size: 12px; text-align: center;">
+                <div style="background: #1a1a1a; padding: 10px; border-radius: 8px; flex: 1;">
+                    <p>1° Turno</p>
+                    <b id="turno-manha">--</b>
+                </div>
+                <div style="background: #1a1a1a; padding: 10px; border-radius: 8px; flex: 1;">
+                    <p>2° Turno</p>
+                    <b id="turno-tarde">--</b>
+                </div>
+                <div style="background: #1a1a1a; padding: 10px; border-radius: 8px; flex: 1;">
+                    <p>3° Turno</p>
+                    <b id="turno-noite">--</b>
+                </div>
+            </div>
+
+
             <div class="gauge-wrapper">
                 <svg class="gauge-svg" viewBox="0 0 100 100">
                     <path class="gauge-track" d="M 22 78 A 38 38 0 1 1 78 78" />
                     <path class="gauge-fill" d="M 22 78 A 38 38 0 1 1 78 78" />
                 </svg>
-                
-                
                 <div class="gauge-content">
                     <span class="label">Vagas disponíveis</span>
-                    <span class="value">700</span>
+                    <span id="vagas-count" class="value">---</span>
                 </div>
             </div>
+
+
             <div class="gauge-wrapper-2">
                 <svg class="gauge-svg" viewBox="0 0 100 100">
                     <path class="gauge-track" d="M 22 78 A 38 38 0 1 1 78 78" />
                     <path class="gauge-fill" d="M 22 78 A 38 38 0 1 1 78 78" />
                 </svg>
-                
                 <div class="gauge-content">
-                    <span class="label">Entradas hoje</span>
-                    <span class="value">923</span>
+                    <span id="count-label" class="label">Entradas hoje</span>
+                    <span id="eventos-count" class="value">---</span>
                 </div>
             </div>
         </section>
 
+
     </main>
 
+
 </body>
+
+
+<script src="script.js"></script>
 </html>
+
