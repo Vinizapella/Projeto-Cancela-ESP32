@@ -80,7 +80,7 @@ header {
 
 main{
     display: flex;
-    width: 1900px;
+    width: 19   00px;
 }
 
 .main-content {
@@ -205,20 +205,11 @@ h1 {
     color: #efefef;
 }
 
-.btn-hour {
-    background-color: #ffffff; 
-    color: black;
-}
-
 .btn-pill:hover {
     opacity: 0.9;
 }
 
-.selection-options {
-    display: flex;
-    align-items: center;
-    background-color: transparent;
-}
+
 
 .btn-nav {
     background: none;
@@ -239,14 +230,6 @@ h1 {
 
 .btn-nav:active {
     transform: scale(0.9);
-}
-
-.date-display {
-    font-size: 1.6rem;
-    font-weight: 500;
-    min-width: 80px; 
-    text-align: center;
-    color: #fff;
 }
 
 /* --- Container Principal da Direita --- */
