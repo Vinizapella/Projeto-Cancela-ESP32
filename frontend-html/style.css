@@ -261,6 +261,8 @@ h1 {
     border-radius: 15px;
     padding: 10px;
     font-size: 1.6rem;
+    max-height: 315px; 
+    overflow-y: auto;
 }
 
 .employee-row {
@@ -304,7 +306,43 @@ h1 {
     padding: 10px 0;
     max-width: 80px;
     margin-right: 25px;
-    overflow: hidden; 
+    height: 438px;           
+    overflow-y: auto;        
+    overflow-x: hidden;      
+}
+
+#lista-notificacoes-icones {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 315px;      
+    overflow-y: auto;    
+    overflow-x: hidden;
+}
+
+#lista-notificacoes-texto {
+    height: 450px;       
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.side-icon-item {
+    min-height: 72px;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #333;
+}
+
+.header-left-notifications::-webkit-scrollbar,
+.header-right-notifications::-webkit-scrollbar {
+    width: 6px;
+}
+
+.header-left-notifications::-webkit-scrollbar-thumb,
+.header-right-notifications::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
 }
 
 .side-icon-item {

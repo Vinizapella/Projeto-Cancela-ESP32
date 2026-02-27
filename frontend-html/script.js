@@ -104,7 +104,7 @@ function renderizarLista(dados) {
         const divIcone = document.createElement('div');
         divIcone.className = 'side-icon-item';
         const icone = nomeEvento.toLowerCase().includes('botao') || nomeEvento.toLowerCase().includes('caminhao') ? 'caminhao.png' : 'carro.png';
-        divIcone.innerHTML = `<img src="${icone}" style="width: 50px; padding-top: 10px;" onerror="this.src='carro.png'">`;
+        divIcone.innerHTML = `<img src="${icone}" style="width: 50px; object-fit: contain;" onerror="this.src='carro.png'">`;
         scrollIcones.appendChild(divIcone);
     });
 }
@@ -130,6 +130,10 @@ const sTexto = document.getElementById('lista-notificacoes-texto');
 const sIcones = document.getElementById('lista-notificacoes-icones');
 sTexto.onscroll = () => { sIcones.scrollTop = sTexto.scrollTop; };
 sIcones.onscroll = () => { sTexto.scrollTop = sIcones.scrollTop; };
+const container = document.getElementById('lista-notificacoes-texto');
+container.scrollTop = container.scrollHeight;
+const containerIcones = document.getElementById('lista-notificacoes-icones');
+containerIcones.scrollTop = containerIcones.scrollHeight;
 
 window.onload = carregarDados;
 setInterval(carregarDados, 5000);
