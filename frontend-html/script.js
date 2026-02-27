@@ -1,19 +1,23 @@
 const API_URL = 'http://localhost:8080/api/estacionamento';
 
+let todasAsNotificacoes = [];
 let modoAtual = 'entrada';
 let indicePeriodo = 0;
 const periodos = ["Hoje", "Ontem", "Esta Semana", "Semana Passada"];
 
 function formatarHora(dataString) {
-    if (!dataString) return "00:00";
+    if (!dataString) return "00/00/0000 00:00";
     try {
         const data = new Date(dataString);
-        return data.toLocaleTimeString('pt-BR', { 
+        return data.toLocaleString('pt-BR', { 
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
             hour: '2-digit', 
             minute: '2-digit' 
         });
     } catch (e) { 
-        return "00:00"; 
+        return "00/00/0000 00:00"; 
     }
 }
 
@@ -34,6 +38,8 @@ async function carregarDados() {
 
         const resEventos = await fetch(`${API_URL}/${endpoint}`);
         const todosOsDados = await resEventos.json();
+
+        todasAsNotificacoes = todosOsDados;
 
         const agora = new Date();
         
@@ -82,6 +88,7 @@ async function carregarDados() {
 }
 
 function renderizarLista(dados) {
+    
     const scrollTexto = document.getElementById('lista-notificacoes-texto');
     const scrollIcones = document.getElementById('lista-notificacoes-icones');
     
@@ -134,6 +141,34 @@ const container = document.getElementById('lista-notificacoes-texto');
 container.scrollTop = container.scrollHeight;
 const containerIcones = document.getElementById('lista-notificacoes-icones');
 containerIcones.scrollTop = containerIcones.scrollHeight;
+
+function baixarRelatorio() {
+    if (todasAsNotificacoes.length === 0) {
+        alert("Não há dados carregados para exportar.");
+        return;
+    }
+
+    let csvContent = "\uFEFFEvento,Data e Hora\n";
+
+    todasAsNotificacoes.forEach(item => {
+        const evento = item.evento || (modoAtual === 'entrada' ? "Entrada" : "Saída"); 
+        const data = item.data ? new Date(item.data).toLocaleString('pt-BR') : "";
+        
+        csvContent += `"${evento}","${data}"\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    
+    link.href = url;
+    link.download = `relatorio_${modoAtual}_completo.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+}
 
 window.onload = carregarDados;
 setInterval(carregarDados, 5000);
