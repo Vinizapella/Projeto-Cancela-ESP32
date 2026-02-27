@@ -4,14 +4,19 @@ let modoAtual = 'entrada';
 let indicePeriodo = 0;
 const periodos = ["Hoje", "Ontem", "Esta Semana", "Semana Passada"];
 
-// 1. Formata a hora para exibir na lista (HH:MM)
+// 1. Formata a hora usando a lógica do seu código antigo que dava certo
 function formatarHora(dataString) {
-    if(!dataString) return "00:00";
+    if (!dataString) return "00:00";
     try {
-        // Trata tanto "YYYY-MM-DD HH:mm:ss" quanto "YYYY-MM-DDTHH:mm:ss"
-        const parteHora = dataString.includes(" ") ? dataString.split(" ")[1] : dataString.split("T")[1];
-        return parteHora ? parteHora.substring(0, 5) : "00:00";
-    } catch (e) { return "00:00"; }
+        // A lógica do seu código antigo: simples e funcional
+        const data = new Date(dataString);
+        return data.toLocaleTimeString('pt-BR', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+    } catch (e) { 
+        return "00:00"; 
+    }
 }
 
 // 2. Função Mestra de Carga de Dados
@@ -20,73 +25,62 @@ async function carregarDados() {
         const periodoAtual = periodos[indicePeriodo]; 
         const endpoint = modoAtual === 'entrada' ? 'entradas' : 'saidas';
 
-        // Atualiza textos
+        // Atualiza textos da interface
         document.querySelectorAll('#display-periodo-card').forEach(el => el.innerText = periodoAtual);
         const txtCirculo = document.getElementById('count-label');
         if (txtCirculo) txtCirculo.innerText = `${modoAtual.toUpperCase()}S ${periodoAtual.toUpperCase()}`;
 
         // Busca Vagas
         const resVagas = await fetch(`${API_URL}/vagas`);
-        if (resVagas.ok) document.getElementById('vagas-count').innerText = await resVagas.text();
+        if (resVagas.ok) {
+            const vagas = await resVagas.json();
+            document.getElementById('vagas-count').innerText = vagas;
+        }
 
         // Busca Eventos
         const resEventos = await fetch(`${API_URL}/${endpoint}`);
         const todosOsDados = await resEventos.json();
 
-        // --- NOVA LÓGICA DE FILTRO (Dias e Horas) ---
+        // --- LÓGICA DE FILTRO ---
         const agora = new Date();
         
         const dadosFiltrados = todosOsDados.filter(item => {
             if (!item.data) return false;
-
-            // Converte a string do banco ("2026-02-26 21:40:00") para objeto Date
-            // Trocamos o espaço por "T" para o JS aceitar melhor
-            const dataISO = item.data.replace(" ", "T");
-            const dataItem = new Date(dataISO);
-
-            // Se a conversão falhar, tentamos pegar só os 10 primeiros caracteres
-            if (isNaN(dataItem)) {
-                const partes = item.data.substring(0, 10).split('-');
-                dataItem.setFullYear(partes[0], partes[1] - 1, partes[2]);
-            }
+            const dataItem = new Date(item.data);
 
             if (periodoAtual === "Hoje") {
                 return dataItem.toLocaleDateString() === agora.toLocaleDateString();
             } 
-            
             if (periodoAtual === "Ontem") {
                 const ontem = new Date();
                 ontem.setDate(agora.getDate() - 1);
                 return dataItem.toLocaleDateString() === ontem.toLocaleDateString();
             }
-
             if (periodoAtual === "Esta Semana") {
                 const seteDiasAtras = new Date();
                 seteDiasAtras.setDate(agora.getDate() - 7);
                 return dataItem >= seteDiasAtras;
             }
-
-            return true; // Semana Passada / Outros
+            return true;
         });
 
-        // --- ATUALIZAÇÃO DOS TURNOS ---
-        // Aqui o JS vai contar os turnos sozinho baseado no filtro, 
-        // caso o endpoint do back ainda esteja instável.
+        // --- ATUALIZAÇÃO DOS TURNOS (Baseado na hora que funciona) ---
         const resumoLocal = { manha: 0, tarde: 0, noite: 0 };
         
         dadosFiltrados.forEach(item => {
-            const hora = parseInt(formatarHora(item.data).split(':')[0]);
+            const horaTexto = formatarHora(item.data);
+            const hora = parseInt(horaTexto.split(':')[0]);
+            
             if (hora >= 5 && hora < 14) resumoLocal.manha++;
             else if (hora >= 14 && hora < 23) resumoLocal.tarde++;
             else resumoLocal.noite++;
         });
 
-        // Mostra os turnos (Prioriza o resumo local se for Hoje)
         document.getElementById('turno-manha').innerText = resumoLocal.manha;
         document.getElementById('turno-tarde').innerText = resumoLocal.tarde;
         document.getElementById('turno-noite').innerText = resumoLocal.noite;
 
-        // O círculo central agora mostra o total do que o JS encontrou
+        // Círculo central
         document.getElementById('eventos-count').innerText = dadosFiltrados.length;
 
         renderizarLista(dadosFiltrados);
@@ -109,7 +103,6 @@ function renderizarLista(dados) {
         return;
     }
 
-    // Mostra os 30 mais recentes
     [...dados].reverse().slice(0, 30).forEach((item, index) => {
         const nomeEvento = item.evento || (modoAtual === 'entrada' ? "Entrada" : "Saída");
         
@@ -126,7 +119,7 @@ function renderizarLista(dados) {
     });
 }
 
-// 4. Eventos de Interface
+// 4. Eventos e Sincronização
 document.getElementById('btn-refresh').onclick = carregarDados;
 
 document.getElementById('btn-prev-period').onclick = () => {
@@ -144,16 +137,12 @@ document.getElementById('btn-trocar-status').onclick = () => {
     carregarDados();
 };
 
-function baixarRelatorio() {
-    window.location.href = `${API_URL}/relatorio/excel`;
-}
-
-// 5. Sincronização de Scroll Melhorada
 const sTexto = document.getElementById('lista-notificacoes-texto');
 const sIcones = document.getElementById('lista-notificacoes-icones');
-
 sTexto.onscroll = () => { sIcones.scrollTop = sTexto.scrollTop; };
 sIcones.onscroll = () => { sTexto.scrollTop = sIcones.scrollTop; };
 
 // Inicialização
 window.onload = carregarDados;
+// Atualização automática como no seu código antigo
+setInterval(carregarDados, 5000);
