@@ -1,21 +1,46 @@
-const API_URL = 'http://localhost:8080/api/estacionamento';
+const API_BASE = 'http://localhost:8080/api';
 
 let todasAsNotificacoes = [];
-let modoAtual = 'entrada';
+let modoAtual = 'entrada'; 
 let indicePeriodo = 0;
 const periodos = ["Hoje", "Ontem", "Esta Semana", "Semana Passada"];
+
+const ENDPOINTS = {
+    entrada: {
+        "Hoje": "/resumo/entradas/hoje", 
+        "Ontem": "/entradas/ontem",
+        "Esta Semana": "/entradas/semana",
+        "Semana Passada": "/entradas/semanapassada",
+        "vagas": "/entradas/vagas"
+    },
+    saida: {
+        "Hoje": "/saidas",
+        "Ontem": "/saidas/ontem",
+        "Esta Semana": "/saidas/semana",
+        "Semana Passada": "/saidas/passada"
+    }
+};
 
 function formatarHora(dataString) {
     if (!dataString) return "00/00/0000 00:00";
     try {
         const data = new Date(dataString);
-        return data.toLocaleString('pt-BR', { 
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
+        
+        if (dataString.includes('T')) {
+            const horaBruta = parseInt(dataString.split('T')[1].substring(0, 2));
+            const horaObjeto = data.getHours();
+            if (horaObjeto !== horaBruta) {
+                data.setHours(data.getHours());
+            }
+        }
+
+        const dia = String(data.getDate()).padStart(2, '0');
+        const mes = String(data.getMonth() + 1).padStart(2, '0');
+        const ano = data.getFullYear();
+        const hora = String(data.getHours()).padStart(2, '0');
+        const minuto = String(data.getMinutes()).padStart(2, '0');
+        
+        return `${dia}/${mes}/${ano} ${hora}:${minuto}`;
     } catch (e) { 
         return "00/00/0000 00:00"; 
     }
@@ -23,72 +48,41 @@ function formatarHora(dataString) {
 
 async function carregarDados() {
     try {
-        const periodoAtual = periodos[indicePeriodo]; 
-        const endpoint = modoAtual === 'entrada' ? 'entradas' : 'saidas';
-
-        document.querySelectorAll('#display-periodo-card').forEach(el => el.innerText = periodoAtual);
+        const periodoTexto = periodos[indicePeriodo];
+        let rotaBase = ENDPOINTS[modoAtual][periodoTexto];
+        
+        document.querySelectorAll('#display-periodo-card').forEach(el => el.innerText = periodoTexto);
         const txtCirculo = document.getElementById('count-label');
-        if (txtCirculo) txtCirculo.innerText = `${modoAtual.toUpperCase()}S ${periodoAtual.toUpperCase()}`;
+        if (txtCirculo) txtCirculo.innerText = `${modoAtual.toUpperCase()}S ${periodoTexto.toUpperCase()}`;
 
-        const resVagas = await fetch(`${API_URL}/vagas`);
+        const resVagas = await fetch(`${API_BASE}/entradas/vagas`);
         if (resVagas.ok) {
             const vagas = await resVagas.json();
             document.getElementById('vagas-count').innerText = vagas;
         }
 
-        const resEventos = await fetch(`${API_URL}/${endpoint}`);
-        const todosOsDados = await resEventos.json();
+        const resEventos = await fetch(`${API_BASE}${rotaBase}`);
+        let dados = await resEventos.json();
 
-        todasAsNotificacoes = todosOsDados;
+        if (periodoTexto === "Hoje") {
+            const dataHoje = new Date().toLocaleDateString('en-CA'); 
+            dados = dados.filter(item => {
+                const dataItem = item.data.split('T')[0];
+                return dataItem === dataHoje;
+            });
+        }
 
-        const agora = new Date();
-        
-        const dadosFiltrados = todosOsDados.filter(item => {
-            if (!item.data) return false;
-            const dataItem = new Date(item.data);
+        todasAsNotificacoes = dados;
+        document.getElementById('eventos-count').innerText = dados.length;
 
-            if (periodoAtual === "Hoje") {
-                return dataItem.toLocaleDateString() === agora.toLocaleDateString();
-            } 
-            if (periodoAtual === "Ontem") {
-                const ontem = new Date();
-                ontem.setDate(agora.getDate() - 1);
-                return dataItem.toLocaleDateString() === ontem.toLocaleDateString();
-            }
-            if (periodoAtual === "Esta Semana") {
-                const seteDiasAtras = new Date();
-                seteDiasAtras.setDate(agora.getDate() - 7);
-                return dataItem >= seteDiasAtras;
-            }
-            return true;
-        });
-
-        const resumoLocal = { manha: 0, tarde: 0, noite: 0 };
-        
-        dadosFiltrados.forEach(item => {
-            const horaTexto = formatarHora(item.data);
-            const hora = parseInt(horaTexto.split(':')[0]);
-            
-            if (hora >= 5 && hora < 14) resumoLocal.manha++;
-            else if (hora >= 14 && hora < 23) resumoLocal.tarde++;
-            else resumoLocal.noite++;
-        });
-
-        document.getElementById('turno-manha').innerText = resumoLocal.manha;
-        document.getElementById('turno-tarde').innerText = resumoLocal.tarde;
-        document.getElementById('turno-noite').innerText = resumoLocal.noite;
-
-        document.getElementById('eventos-count').innerText = dadosFiltrados.length;
-
-        renderizarLista(dadosFiltrados);
+        renderizarLista(dados);
 
     } catch (error) {
-        console.error("Erro ao carregar:", error);
+        console.error("Erro ao carregar dados:", error);
     }
 }
 
 function renderizarLista(dados) {
-    
     const scrollTexto = document.getElementById('lista-notificacoes-texto');
     const scrollIcones = document.getElementById('lista-notificacoes-icones');
     
@@ -110,21 +104,23 @@ function renderizarLista(dados) {
 
         const divIcone = document.createElement('div');
         divIcone.className = 'side-icon-item';
-        const icone = nomeEvento.toLowerCase().includes('botao') || nomeEvento.toLowerCase().includes('caminhao') ? 'caminhao.png' : 'carro.png';
-        divIcone.innerHTML = `<img src="${icone}" style="width: 50px; object-fit: contain;" onerror="this.src='carro.png'">`;
+        const icone = nomeEvento.toLowerCase().includes('botao') ? 'caminhao.png' : 'carro.png';
+        divIcone.innerHTML = `<img src="${icone}" style="width: 50px; height: 50px; object-fit: contain;">`;
         scrollIcones.appendChild(divIcone);
     });
 }
 
+const sTexto = document.getElementById('lista-notificacoes-texto');
+const sIcones = document.getElementById('lista-notificacoes-icones');
+
+if (sTexto && sIcones) {
+    sTexto.onscroll = () => { sIcones.scrollTop = sTexto.scrollTop; };
+    sIcones.onscroll = () => { sTexto.scrollTop = sIcones.scrollTop; };
+}
+
 document.getElementById('btn-refresh').onclick = carregarDados;
-
-document.getElementById('btn-prev-period').onclick = () => {
-    if(indicePeriodo < 3) { indicePeriodo++; carregarDados(); }
-};
-
-document.getElementById('btn-next-period').onclick = () => {
-    if(indicePeriodo > 0) { indicePeriodo--; carregarDados(); }
-};
+document.getElementById('btn-prev-period').onclick = () => { if(indicePeriodo < 3) { indicePeriodo++; carregarDados(); } };
+document.getElementById('btn-next-period').onclick = () => { if(indicePeriodo > 0) { indicePeriodo--; carregarDados(); } };
 
 document.getElementById('btn-trocar-status').onclick = () => {
     modoAtual = (modoAtual === 'entrada') ? 'saida' : 'entrada';
@@ -132,43 +128,6 @@ document.getElementById('btn-trocar-status').onclick = () => {
     document.getElementById('gate-title').innerText = modoAtual === 'entrada' ? 'Entradas' : 'Saídas';
     carregarDados();
 };
-
-const sTexto = document.getElementById('lista-notificacoes-texto');
-const sIcones = document.getElementById('lista-notificacoes-icones');
-sTexto.onscroll = () => { sIcones.scrollTop = sTexto.scrollTop; };
-sIcones.onscroll = () => { sTexto.scrollTop = sIcones.scrollTop; };
-const container = document.getElementById('lista-notificacoes-texto');
-container.scrollTop = container.scrollHeight;
-const containerIcones = document.getElementById('lista-notificacoes-icones');
-containerIcones.scrollTop = containerIcones.scrollHeight;
-
-function baixarRelatorio() {
-    if (todasAsNotificacoes.length === 0) {
-        alert("Não há dados carregados para exportar.");
-        return;
-    }
-
-    let csvContent = "\uFEFFEvento,Data e Hora\n";
-
-    todasAsNotificacoes.forEach(item => {
-        const evento = item.evento || (modoAtual === 'entrada' ? "Entrada" : "Saída"); 
-        const data = item.data ? new Date(item.data).toLocaleString('pt-BR') : "";
-        
-        csvContent += `"${evento}","${data}"\n`;
-    });
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    
-    link.href = url;
-    link.download = `relatorio_${modoAtual}_completo.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    URL.revokeObjectURL(url);
-}
 
 window.onload = carregarDados;
 setInterval(carregarDados, 5000);
