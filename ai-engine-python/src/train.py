@@ -34,7 +34,7 @@ def treinar():
         df = pd.DataFrame(dados)
         print(f"📊 {len(df)} registros de entrada carregados (Carros + Caminhões).")
 
-        df['dt'] = pd.to_datetime(df['data']) 
+        df['dt'] = pd.to_datetime(df['data'], format='ISO8601', utc=True)
         df['hora_num'] = df['dt'].dt.hour
         df['dia_semana'] = df['dt'].dt.dayofweek
         df['turno'] = df['hora_num'].apply(categorizar_turno)
