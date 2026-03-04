@@ -1,0 +1,59 @@
+CSS * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+body { background-color: #0d1116; color: #e6edf3; display: flex; height: 100vh; overflow: hidden; }
+
+/* Sidebar */
+.sidebar { width: 70px; background: #161b22; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 20px 0; border-right: 1px solid #30363d; }
+.logo { font-size: 28px; font-weight: bold; color: #e6edf3; }
+.menu-bottom { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+.profile-pic { width: 35px; height: 35px; background: #ccc; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+
+/* Layout Principal */
+.dashboard { flex: 1; display: flex; padding: 20px; gap: 20px; }
+.left-panel { flex: 1.2; display: flex; flex-direction: column; gap: 15px; }
+.right-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+
+/* Botões e Abas */
+header { display: flex; justify-content: space-between; align-items: flex-start; }
+h2 { font-size: 22px; font-weight: 600; }
+.tabs, .sub-tabs, .turnos { display: flex; gap: 10px; margin-top: 10px; }
+button { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-weight: 500; }
+button.active, button:hover { background: rgba(0, 229, 255, 0.1); border-color: #00e5ff; color: #00e5ff; }
+
+.turnos button { flex: 1; background: #161b22; border-radius: 8px; font-size: 16px; padding: 12px; }
+
+.period-selector { color: #8b949e; font-size: 14px; display: flex; gap: 10px; align-items: center; }
+
+/* Caixas e Gráficos */
+.chart-box { background: rgba(22, 27, 34, 0.6); border: 1px solid #30363d; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; }
+.main-chart { flex: 1; }
+.canvas-container { position: relative; width: 100%; height: 100%; flex: 1; min-height: 200px;}
+.canvas-container.small { min-height: 150px; }
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.legend { font-size: 12px; text-align: right; line-height: 1.5; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+.dot.entradas { background: #00e5ff; }
+.dot.saidas { background: #1f6feb; }
+.arrow.up { color: #00ff88; }
+.arrow.down { color: #ff5555; }
+
+/* Footer Esquerdo */
+.footer-left { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; }
+.status p { font-size: 12px; color: #8b949e; }
+.status-ativo { color: #00ff88; font-size: 24px; text-shadow: 0 0 10px rgba(0, 255, 136, 0.4); }
+.btn-analisar { background: #00e5ff; color: #000; font-weight: bold; border: none; padding: 12px 24px; border-radius: 25px; box-shadow: 0 0 15px rgba(0, 229, 255, 0.3); }
+
+/* Câmera / Visão */
+.camera-section { flex: 1.5; background: rgba(22, 27, 34, 0.6); border: 1px solid #00e5ff; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; position: relative; box-shadow: inset 0 0 20px rgba(0, 229, 255, 0.05); }
+.camera-header p { font-size: 14px; color: #8b949e; }
+.camera-view { flex: 1; position: relative; margin-top: 15px; background: #000; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.barrier-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #111 40%, #222 50%, #111 60%); opacity: 0.5; }
+
+.overlay-circle { position: absolute; width: 160px; height: 160px; border: 2px solid rgba(0, 229, 255, 0.5); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 0 20px rgba(0, 229, 255, 0.1), inset 0 0 20px rgba(0, 229, 255, 0.1); backdrop-filter: blur(2px); }
+.overlay-circle.left { left: 10%; }
+.overlay-circle.right { right: 10%; border-color: rgba(31, 111, 235, 0.5); box-shadow: 0 0 20px rgba(31, 111, 235, 0.1), inset 0 0 20px rgba(31, 111, 235, 0.1); }
+.overlay-circle p { font-size: 10px; color: #e6edf3; letter-spacing: 1px; }
+.overlay-circle h2 { font-size: 32px; color: #fff; margin-top: 5px; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+/* Gráficos Inferiores */
+.bottom-charts { display: flex; gap: 15px; flex: 1; }

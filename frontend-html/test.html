@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Acesso IA - Zapella</title>
+    <link rel="stylesheet" href="teste.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">D</div>
+        <div class="menu-bottom">
+            <div class="icon-settings">⚙️</div>
+            <div class="profile-pic">👨‍💼</div>
+        </div>
+    </nav>
+
+    <main class="dashboard">
+        <section class="left-panel">
+            <header>
+                <div class="header-title">
+                    <h2>Controle de Acesso IA</h2>
+                    <div class="tabs">
+                        <button class="tab active">IA Analítica</button>
+                        <button class="tab">Modelo Preditivo</button>
+                    </div>
+                </div>
+                <div class="period-selector">
+                    <span>&lt;</span> Hoje <span>&gt;</span>
+                </div>
+            </header>
+
+            <div class="sub-tabs">
+                <button>Padrão Entrada</button>
+                <button>Anomalias</button>
+                <button>Previsão</button>
+            </div>
+
+            <div class="turnos">
+                <button class="turno-btn active" onclick="buscarPrevisao(1)">06:00-14:00</button>
+                <button class="turno-btn" onclick="buscarPrevisao(2)">14:00-22:00</button>
+                <button class="turno-btn" onclick="buscarPrevisao(3)">22:00-06:00</button>
+            </div>
+
+            <div class="chart-box main-chart">
+                <div class="chart-header">
+                    <h3>Previsão de Entradas e Saídas</h3>
+                    <div class="legend">
+                        <span class="dot entradas"></span> Entradas <span class="arrow up">▲</span><br>
+                        <span class="dot saidas"></span> Saídas <span class="arrow down">▼</span>
+                    </div>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="linhaChart"></canvas>
+                </div>
+            </div>
+
+            <div class="footer-left">
+                <div class="status">
+                    <p>Status do Modelo</p>
+                    <h3 class="status-ativo">Ativo</h3>
+                </div>
+                <button class="btn-analisar">Iniciar Análise</button>
+            </div>
+        </section>
+
+        <section class="right-panel">
+            <div class="camera-section">
+                <header class="camera-header">
+                    <h2>🔍 IA Visão</h2>
+                    <p>Hoje</p>
+                </header>
+                <div class="camera-view">
+                    <div class="barrier-bg"></div>
+                    
+                    <div class="overlay-circle left">
+                        <p>PREVISÃO DE<br>ENTRADAS</p>
+                        <h2 id="valor-entradas">--</h2>
+                    </div>
+                    
+                    <div class="overlay-circle right">
+                        <p>PREVISÃO DE<br>SAÍDAS</p>
+                        <h2 id="valor-saidas">--</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-charts">
+                <div class="chart-box">
+                    <h3>Fluxo por Hora</h3>
+                    <div class="canvas-container small">
+                        <canvas id="barraChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <h3>Distribuição de Veículos</h3>
+                    <div class="canvas-container small">
+                        <canvas id="pizzaChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="grafos.js"></script>
+</body>
+</html>
