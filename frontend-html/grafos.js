@@ -1,4 +1,3 @@
-
 const ctxLinha = document.getElementById('linhaChart').getContext('2d');
 new Chart(ctxLinha, {
     type: 'line',
@@ -11,13 +10,21 @@ new Chart(ctxLinha, {
                 borderColor: '#00e5ff',
                 backgroundColor: 'rgba(0, 229, 255, 0.05)',
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
+                borderWidth: 3,           
+                pointRadius: 5,           
+                pointHoverRadius: 8,     
+                pointBackgroundColor: '#00e5ff' 
             },
             {
                 label: 'Saídas',
                 data: [30, 150, 200, 190, 80, 20],
                 borderColor: '#1f6feb',
-                tension: 0.4
+                tension: 0.4,
+                borderWidth: 3,           
+                pointRadius: 5,           
+                pointHoverRadius: 8,     
+                pointBackgroundColor: '#1f6feb' 
             }
         ]
     },
@@ -30,24 +37,29 @@ new Chart(ctxLinha, {
         layout: {
             padding: {
                 top: 20,
-                bottom: 10
+                bottom: 10,
+                left: 10,
+                right: 30
             }
         },  
         scales: {
             y: {
+                beginAtZero: true,
                 ticks: {
-                    font: {
-                        size: 18
-                    },
+                    font: { size: 18 },
                     color: '#8b949e'
+                },
+                grid: {
+                    display: false
                 }
             },
             x: {
                 ticks: {
-                    font: {
-                        size: 18
-                    },
+                    font: { size: 18 },
                     color: '#8b949e'
+                },
+                grid: {
+                    display: false
                 }
             }
         }
@@ -118,6 +130,9 @@ new Chart(ctxPizza, {
         } 
     }
 });
+
+
+
 
 // --- 2. CONEXÃO COM A SUA API EM PYTHON ---
 

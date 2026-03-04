@@ -9,15 +9,12 @@
 </head>
 <body>
 
-    <!-- Cabeçalho -->
     <header class="header">
         <div class="division-header">
-            <!-- Logo -->
             <div class="header-top">
                 <img class="logo-header" src="logo.png" alt="Logo do Sistema de Controle de Acesso">
             </div>
 
-            <!-- Configurações e Perfil -->
             <div class="header-bottom">
                 <button id="gearButton" class="gear-btn" aria-label="Abrir configurações">
                     <img class="gear-icon" src="engrenagem.png" alt="Ícone de engrenagem (configurações)">
@@ -29,16 +26,13 @@
         </div>
     </header>
 
-    <!-- Conteúdo Principal -->
     <main class="main">
         <div class="main-content">
 
-            <!-- Coluna Esquerda: Título + Turnos + Opções -->
             <div class="main-left-area">
                 <h1>Controle IA de Acesso Cancela</h1>
 
                 <section class="main-left">
-                    <!-- Botões de opções rápidas -->
                     <div class="main-options">
                         <div class="option">
                             <button class="button-ia">Modo Normal</button>
@@ -46,7 +40,6 @@
                         </div>
                     </div>
 
-                    <!-- Seleção de Turno -->
                     <div class="main-time-section">
                         <div class="title-time">
                             <span>Selecione o Turno</span>
@@ -72,7 +65,6 @@
                 </section>
             </div>
 
-            <!-- Coluna Direita: Notificações + Status -->
             <div class="main-right-area">
                 <section class="main-right">
                     <div class="title-main-right-top">
@@ -83,8 +75,8 @@
                         <div class="chart-header">
                             <h3></h3>
                             <div class="legend">
-                                <span class="dot entradas"></span> Entradas</span><br>
-                                <span class="dot saidas"></span> Saídas </span>
+                                <span class="dot entradas"></span> Entradas<br>
+                                <span class="dot saidas"></span> Saídas
                             </div>
                         </div>
                         <div class="canvas-container">
@@ -92,12 +84,9 @@
                         </div>
                     </div>
                 </section>
-
-                
             </div>
         </div>
 
-        <!-- Seção da Cancela + Gauges -->
         <section class="main-right-right">
             <img class="image-entrada" src="entrada-direita.jpg" alt="Visão da entrada com gráfico de acessos">
 
@@ -111,7 +100,6 @@
                 </div>
             </div>
 
-            <!-- Resumo dos turnos -->
             <div class="turnos-resumo-container">
                 <div>
                     <p>1° Turno</p>
@@ -127,7 +115,6 @@
                 </div>
             </div>
 
-            <!-- Gauges -->
             <div class="gauge-wrapper">
                 <svg class="gauge-svg" viewBox="0 0 100 100">
                     <path class="gauge-track" d="M 22 78 A 38 38 0 1 1 78 78" />
@@ -150,7 +137,7 @@
                 </div>
             </div>
 
-           <div class="bottom-charts">
+            <div class="bottom-charts">
                 <div class="chart-box">
                     <h3>Fluxo por Hora</h3>
                     <div class="canvas-container small">
@@ -167,8 +154,7 @@
         </section>
     </main>
 
+    <script src="grafos.js"></script>
+
 </body>
-
-<script src="grafos.js"></script>
-
 </html>
