@@ -1,0 +1,401 @@
+/* ==============================================
+   RESET E ESTILO GLOBAL
+   ============================================== */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0A1114; 
+    display: flex;
+    margin-left: 40px;
+}
+
+/* ==============================================
+   HEADER (barra lateral esquerda)
+   ============================================== */
+header {
+    background-color: #1A2326; 
+    display: flex;
+    flex-direction: column;
+    height: 846px;
+    width: 140px; 
+    border-radius: 20px;
+    margin: 35px;
+    padding: 40px 0; 
+    box-sizing: border-box;
+    margin-right: 50px;
+    position: relative; 
+    box-shadow: 0 0 25px rgba(33, 209, 209, 0.3), 
+                0 0 10px rgba(33, 209, 209, 0.2);
+    border: 1px solid rgba(33, 209, 209, 0.2); 
+    overflow: hidden; 
+}
+
+.division-header {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.logo-header {
+    width: 65px; 
+    height: 65px;
+    object-fit: contain;
+}
+
+.header-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 35px; 
+    margin-bottom: 10px;
+}
+
+.gear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gear-icon {
+    width: 55px; 
+    height: 55px;
+    filter: brightness(0.6); 
+    transition: filter 0.3s, transform 0.3s;
+}
+
+.gear-btn:hover .gear-icon {
+    filter: brightness(1) drop-shadow(0 0 8px #21D1D1); 
+    transform: rotate(45deg);
+}
+
+.profile-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%; 
+    background-size: cover;
+    background-position: center;
+    border: 3px solid #21D1D1; 
+    box-shadow: 0 0 15px rgba(33, 209, 209, 0.4); 
+    object-fit: cover;
+}
+/* ==============================================
+   MAIN (área central e direita)
+   ============================================== */
+main {
+    display: flex;
+    width: 1900px;
+}
+
+.main-content {
+    height: 70px;
+    width: 600px;
+    margin-top: 35px;
+    background: linear-gradient(-145deg, transparent 20%, #1A2326 20.5%);
+    border-radius: 20px 20px 0 0; 
+}
+
+.main-left {
+    background-color: #1A2326; 
+    width: 815px;
+    height: 220px;
+    border-radius: 0px 20px 20px 20px; 
+    margin-top: -20px; 
+}
+
+h1 {
+    color: white;
+    margin-left: 20px;
+    font-size: 35px;
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+}
+
+.main-options {
+    display: flex;
+}
+
+.option {
+    display: flex;
+    gap: 20px; 
+    padding: 20px;
+    border-radius: 50px;
+}
+
+.button-time, .button-ia {
+    border: none;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 100px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.button-time {
+    background-color: #21D1D1; /* Ciano */
+    color: #000;
+}
+
+.button-ia {
+    background-color: #0A1114; /* Fundo mais escuro para contraste */
+    color: #ffffff;
+    border: 1px solid #21D1D1;
+}
+
+.button-ia:hover {
+    background-color: #1A2326;
+}
+
+.button-time:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 0 15px rgba(33, 209, 209, 0.4);
+}
+
+.main-time-section {
+    color: white;
+    padding-top: 0px;
+    padding-left: 20px;
+    border-radius: 12px;
+}
+
+.title-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.selection-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1rem;
+    font-weight: normal;
+    padding-right: 20px;
+}
+
+.shift-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 250px); 
+    gap: 15px;
+}
+
+.shift-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-pill {
+    border: none;
+    border-radius: 50px;
+    padding: 12px;
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 18px;
+}
+
+.btn-morning.active {
+    background-color: #21D1D1; 
+    color: black;
+}
+
+.btn-inactive {
+    background-color: #0A1114; 
+    color: #efefef;
+}
+
+.btn-pill:hover {
+    opacity: 0.9;
+}
+
+.btn-nav {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.6rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-nav:hover {
+    color: #21D1D1; 
+    transform: scale(1.2);
+}
+
+.btn-nav:active {
+    transform: scale(0.9);
+}
+
+/* ==============================================
+   COLUNA DIREITA - Notificações e Status
+   ============================================== */
+.main-right {
+    margin-top: 20px;
+    background-color: #1A2326; /* Azul Petróleo */
+    color: white;
+    padding-left: 25px;
+    padding-bottom: 10px;
+    padding-top: 0.1px;
+    border-radius: 20px;
+    width: 790px;
+}
+
+.title-main-right-top h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+
+/* ==============================================
+   SEÇÃO DA CANCELA + GAUGES (direita)
+   ============================================== */
+.main-right-right {
+    position: relative; 
+    background-color: #1A2326; /* Azul Petróleo */
+    color: white;
+    margin-left: 320px;
+    border-radius: 20px;
+    width: 780px;
+    height: 846px;
+    margin-top: 35px;
+    overflow: hidden; 
+}
+
+.image-entrada {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 20px;
+    display: block;
+}
+
+.gauge-wrapper {
+    position: absolute; 
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 40%;           
+    left: 20%;          
+    transform: translate(-50%, -50%); 
+    z-index: 10;        
+}
+
+.gauge-wrapper-2 {
+    position: absolute; 
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 40%;           
+    left: 80%;          
+    transform: translate(-50%, -50%); 
+    z-index: 10;        
+}
+
+.gauge-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 5px rgba(33, 209, 209, 0.5));
+}
+
+.gauge-track {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.05);
+    stroke-width: 1.5; 
+    stroke-linecap: round;
+}
+
+.gauge-fill {
+    fill: none;
+    stroke: #21D1D1;
+    stroke-linecap: round;
+    stroke-dasharray: 165; 
+    stroke-dashoffset: 58;
+}
+
+.gauge-content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    color: white;
+}
+
+.label {
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    padding-bottom: 3px;
+}
+
+.value {
+    font-size: 65px; 
+    color: #21D1D1;
+    line-height: 0.8;
+    text-shadow: 0 0 15px rgba(33, 209, 209, 0.6);
+}
+
+.unit {
+    font-size: 22px;
+    font-weight: 500;
+    opacity: 0.7;
+    letter-spacing: 1px;
+}
+
+.gate-header {
+    position: absolute;
+    top: 30px;      
+    left: 40px;     
+    display: flex;
+    align-items: center;
+    gap: 15px;      
+    z-index: 20;    
+}
+
+.gate-icon {
+    width: 45px;
+    height: 45px;
+}
+
+.gate-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.gate-title {
+    color: #21D1D1; 
+    font-size: 40px;
+    margin: 0;
+    text-shadow: 0 0 15px rgba(33, 209, 209, 0.5);
+}
+
+.gate-subtitle {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 400;
+    margin: 0;
+    opacity: 0.9;
+    letter-spacing: 0.5px;
+}

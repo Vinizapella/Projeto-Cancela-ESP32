@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Controle de Cancela</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styleIa.css">
 </head>
 <body>
 
@@ -34,15 +34,13 @@
 
             <!-- Coluna Esquerda: Título + Turnos + Opções -->
             <div class="main-left-area">
-                <h1>Controle de Acesso Cancela</h1>
+                <h1>Controle IA de Acesso Cancela</h1>
 
                 <section class="main-left">
                     <!-- Botões de opções rápidas -->
                     <div class="main-options">
                         <div class="option">
-                            <button class="button-time">Horários</button>
-                            <button class="button-ia">Modo IA</button>
-                            <button onclick="baixarRelatorio()" class="button-ia">Baixar CSV</button>
+                            <button class="button-ia">Modo Normal</button>
                             <button id="btn-refresh" class="btn-pill" style="background:#1f1f1f;" aria-label="Atualizar dados"></button>
                         </div>
                     </div>
@@ -53,7 +51,7 @@
                             <span>Selecione o Turno</span>
                             <div class="selection-options">
                                 <button id="btn-prev-period" class="btn-nav" aria-label="Período anterior">&lt;</button>
-                                <p id="display-periodo-card" class="gate-subtitle">Hoje</p>
+                                <p id="display-periodo-card" class="gate-subtitle">Amanhã</p>
                                 <button id="btn-next-period" class="btn-nav" aria-label="Próximo período">&gt;</button>
                             </div>
                         </div>
@@ -77,30 +75,15 @@
             <div class="main-right-area">
                 <section class="main-right">
                     <div class="title-main-right-top">
-                        <h2>Últimas Notificações</h2>
+                        <h2>Previsao de Entradas e Saidas</h2>
                     </div>
 
                     <div class="verification-container">
-                        <!-- Lista de texto das notificações (preenchida via JS) -->
-                        <div id="lista-notificacoes-texto" class="header-left-notifications">
-                            <!-- Conteúdo dinâmico aqui -->
-                        </div>
-
-                        <!-- Lista de ícones sincronizada (preenchida via JS) -->
-                        <div id="lista-notificacoes-icones" class="header-right-notifications">
-                            <!-- Ícones dinâmicos aqui -->
-                        </div>
+                        
                     </div>
                 </section>
 
-                <!-- Status Atual -->
-                <div class="access-status-container">
-                    <div class="status-text">
-                        <span>Status</span>
-                        <h2 id="status-display" class="status-authorized">Entrada</h2>
-                    </div>
-                    <button id="btn-trocar-status" class="btn-raise">Trocar Status</button>
-                </div>
+                
             </div>
         </div>
 
@@ -114,8 +97,7 @@
                     <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
                 </svg>
                 <div class="gate-text">
-                    <h1 id="gate-title" class="gate-title">Entradas</h1>
-                    <p id="display-periodo-card" class="gate-subtitle">Hoje</p>
+                    <h1 id="gate-title" class="gate-title">IA Visão</h1>
                 </div>
             </div>
 
@@ -142,7 +124,7 @@
                     <path class="gauge-fill" d="M 22 78 A 38 38 0 1 1 78 78" />
                 </svg>
                 <div class="gauge-content">
-                    <span class="label">Vagas disponíveis</span>
+                    <span class="label">Previsão Entradas</span>
                     <span id="vagas-count" class="value">---</span>
                 </div>
             </div>
@@ -153,13 +135,12 @@
                     <path class="gauge-fill" d="M 22 78 A 38 38 0 1 1 78 78" />
                 </svg>
                 <div class="gauge-content">
-                    <span id="count-label" class="label">Entradas hoje</span>
+                    <span id="count-label" class="label">Previsão Saidas</span>
                     <span id="eventos-count" class="value">---</span>
                 </div>
             </div>
         </section>
     </main>
 
-    <script src="script.js"></script>
 </body>
 </html>
