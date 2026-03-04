@@ -54,7 +54,6 @@ new Chart(ctxLinha, {
     }
 });
 
-// Gráfico de Barras (Direita)
 const ctxBarra = document.getElementById('barraChart').getContext('2d');
 new Chart(ctxBarra, {
     type: 'bar',
@@ -64,13 +63,35 @@ new Chart(ctxBarra, {
             label: 'Fluxo',
             data: [100, 180, 260, 50],
             backgroundColor: '#00e5ff',
-            borderRadius: 4
+            borderRadius: 8 
         }]
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    options: { 
+        responsive: true, 
+        maintainAspectRatio: false, 
+        plugins: { 
+            legend: { display: false } 
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    font: { size: 17 }, 
+                    color: '#8b949e'
+                },
+                grid: { color: 'rgba(255, 255, 255, 0.05)' }
+            },
+            x: {
+                ticks: {
+                    font: { size: 17 }, 
+                    color: '#8b949e'
+                },
+                grid: { display: false }
+            }
+        }
+    }
 });
 
-// Gráfico de Pizza (Apenas Carros e Caminhões)
 const ctxPizza = document.getElementById('pizzaChart').getContext('2d');
 new Chart(ctxPizza, {
     type: 'pie',
@@ -78,7 +99,7 @@ new Chart(ctxPizza, {
         labels: ['Carros', 'Caminhões'],
         datasets: [{
             data: [75, 25],
-            backgroundColor: ['#1f6feb', '#00ff88'], // Azul e Verde
+            backgroundColor: ['#1f6feb', '#00e5ff'],
             borderWidth: 0
         }]
     },
@@ -86,11 +107,17 @@ new Chart(ctxPizza, {
         responsive: true, 
         maintainAspectRatio: false,
         plugins: { 
-            legend: { position: 'right', labels: { color: '#e6edf3' } } 
+            legend: { 
+                position: 'right', 
+                labels: { 
+                    color: '#e6edf3',
+                    padding: 20,
+                    font: { size: 18 } 
+                } 
+            } 
         } 
     }
 });
-
 
 // --- 2. CONEXÃO COM A SUA API EM PYTHON ---
 
