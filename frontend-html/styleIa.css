@@ -479,7 +479,7 @@ h1 {
     backdrop-filter: blur(10px); 
     border: 1px solid rgba(33, 209, 209, 0.3);
     border-radius: 12px; 
-    padding: 15px; 
+    padding: 5px; 
     display: flex; 
     flex-direction: column; 
     pointer-events: auto;
@@ -489,7 +489,7 @@ h1 {
 .canvas-container.small { 
     flex: 1;
     position: relative; 
-    width: 100%;
+    width: 80%;
     height: 100%;
     min-height: 0; 
 }
