@@ -1,7 +1,14 @@
 /* ==============================================
+   FONTE
+   ============================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200&display=swap');
+
+/* ==============================================
    RESET E ESTILO GLOBAL
    ============================================== */
 body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
     margin: 0;
     padding: 0;
     background-color: #121212;
@@ -375,7 +382,7 @@ h1 {
     color: #d7ff00; 
     margin: 0;
     font-weight: bold;
-    font-size: 36px;
+    font-size: 30px;
     padding-left: 12px;
 }
 
@@ -419,7 +426,6 @@ h1 {
     border-radius: 20px;
     display: block;
 }
-
 .gauge-wrapper {
     position: absolute; 
     width: 300px;
@@ -463,8 +469,10 @@ h1 {
     fill: none;
     stroke: #d7ff00;
     stroke-linecap: round;
-    stroke-dasharray: 165; 
-    stroke-dashoffset: 58;
+    stroke-dasharray: 165;
+    stroke-dashoffset: 165; /* começa vazio — JS controla */
+    transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+                stroke 0.5s ease;
 }
 
 .gauge-content {
@@ -529,7 +537,7 @@ h1 {
 
 .gate-subtitle {
     color: #ffffff;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 400;
     margin: 0;
     opacity: 0.9;
