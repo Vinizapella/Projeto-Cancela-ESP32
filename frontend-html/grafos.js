@@ -1,14 +1,13 @@
 /* ==============================================
-   VARIÁVEIS GLOBAIS DOS GRÁFICOS
+    VARIÁVEIS GLOBAIS
    ============================================== */
-let meuGraficoLinha;
-let meuGraficoBarra;
-let meuGraficoPizza;
+let meuGraficoLinha, meuGraficoBarra, meuGraficoPizza;
+const periodosTexto = ["Amanhã", "Próxima Semana"];
+let indiceAtual = 0;
 
 /* ==============================================
-   INICIALIZAÇÃO DOS GRÁFICOS
+    INICIALIZAÇÃO DOS GRÁFICOS (SEU DESIGN)
    ============================================== */
-
 function inicializarGraficos() {
     const ctxLinha = document.getElementById('linhaChart').getContext('2d');
     meuGraficoLinha = new Chart(ctxLinha, {
@@ -23,8 +22,8 @@ function inicializarGraficos() {
                     backgroundColor: 'rgba(0, 229, 255, 0.05)',
                     fill: true,
                     tension: 0.4,
-                    borderWidth: 6,
-                    pointRadius: 8,
+                    borderWidth: 5,
+                    pointRadius: 7,
                     pointBackgroundColor: '#00e5ff'
                 },
                 {
@@ -32,15 +31,14 @@ function inicializarGraficos() {
                     data: [0, 0, 0, 0, 0, 0],
                     borderColor: '#1f6feb',
                     tension: 0.4,
-                    borderWidth: 6,
-                    pointRadius: 8,
+                    borderWidth: 5,
+                    pointRadius: 7,
                     pointBackgroundColor: '#1f6feb'
                 }
             ]
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
                 y: { beginAtZero: true, ticks: { font: { size: 18 }, color: '#8b949e' }, grid: { display: false } },
@@ -48,6 +46,7 @@ function inicializarGraficos() {
             }
         }
     });
+
 
     const ctxBarra = document.getElementById('barraChart').getContext('2d');
     meuGraficoBarra = new Chart(ctxBarra, {
@@ -62,8 +61,7 @@ function inicializarGraficos() {
             }]
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false, 
+            responsive: true, maintainAspectRatio: false, 
             plugins: { legend: { display: false } },
             scales: {
                 y: { beginAtZero: true, ticks: { font: { size: 17 }, color: '#8b949e' }, grid: { color: 'rgba(255, 255, 255, 0.05)' } },
@@ -72,6 +70,7 @@ function inicializarGraficos() {
         }
     });
 
+    // Pizza
     const ctxPizza = document.getElementById('pizzaChart').getContext('2d');
     meuGraficoPizza = new Chart(ctxPizza, {
         type: 'pie',
@@ -84,8 +83,7 @@ function inicializarGraficos() {
             }]
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: { 
                 legend: { 
                     position: 'right', 
@@ -97,84 +95,100 @@ function inicializarGraficos() {
 }
 
 /* ==============================================
-   LÓGICA DE INTEGRAÇÃO COM A API PYTHON
+    LÓGICA DE NAVEGAÇÃO E IA (INTEGRADA)
    ============================================== */
+function configurarNavegacao() {
+    const btnPrev = document.getElementById('btn-prev-period');
+    const btnNext = document.getElementById('btn-next-period');
+    const display = document.getElementById('display-periodo-card');
 
-async function buscarPrevisoesIA() {
-    const horasParaPrever = [6, 10, 14, 18, 22, 2];
-    const diaAtual = new Date().getDay();
-    const getTurno = (h) => (h >= 6 && h < 14) ? 1 : (h >= 14 && h < 22) ? 2 : 3;
+    const atualizarPeriodoUI = () => {
+        const texto = periodosTexto[indiceAtual];
+        if (display) display.innerText = texto;
+        const mapa = { "Amanhã": "amanha", "Esta Semana": "esta-semana", "Próxima Semana": "proxima-semana" };
+        buscarPrevisoesIA(mapa[texto]);
+    };
+
+    if (btnNext) btnNext.onclick = () => { indiceAtual = (indiceAtual + 1) % periodosTexto.length; atualizarPeriodoUI(); };
+    if (btnPrev) btnPrev.onclick = () => { indiceAtual = (indiceAtual - 1 + periodosTexto.length) % periodosTexto.length; atualizarPeriodoUI(); };
+}
+
+async function buscarPrevisoesIA(periodo = 'amanha') {
+    const hoje = new Date();
+    let novasLabels;
+    let endpoints = [];
+
+    if (periodo === 'proxima-semana') {
+        novasLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+        endpoints = [0, 1, 2, 3, 4, 5, 6].map(d => ({ hora: -1, dia: d })); 
+    } else {
+        novasLabels = ['06:00', '10:00', '14:00', '18:00', '22:00', '02:00'];
+        let d = new Date();
+        if (periodo === 'amanha') d.setDate(hoje.getDate() + 1);
+        const diaSimulado = d.getDay();
+        endpoints = [6, 10, 14, 18, 22, 2].map(h => ({ hora: h, dia: diaSimulado }));
+    }
 
     try {
-        console.log("Conectando à IA...");
-        const promessas = horasParaPrever.map(hora => 
+        const promessas = endpoints.map(p => 
             fetch("http://127.0.0.1:8000/prever", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    hora: hora,
-                    dia_semana: diaAtual,
-                    turno: getTurno(hora)
+                    hora: p.hora,
+                    dia_semana: p.dia,
+                    turno: (p.hora >= 6 && p.hora < 14) ? 1 : (p.hora >= 14 && p.hora < 22) ? 2 : 3
                 })
-            }).then(res => {
-                if(!res.ok) throw new Error("Erro na API");
-                return res.json();
-            })
+            }).then(res => res.json())
         );
 
         const resultados = await Promise.all(promessas);
-        
         const dadosEntradas = resultados.map(r => r.fluxo_estimado || 0);
         const dadosSaidas = dadosEntradas.map(v => Math.round(v * 0.75));
 
-        
-        atualizarGraficoLinha(dadosEntradas, dadosSaidas);
-        
-        atualizarGraficoBarra(dadosEntradas.slice(0, 4));
-        
-        const fluxoTotal = dadosEntradas.reduce((a, b) => a + b, 0);
-        atualizarGraficoPizza(Math.round(fluxoTotal * 0.8), Math.round(fluxoTotal * 0.2));
+        // Atualiza Labels e Dados mantendo a estilização
+        if (meuGraficoLinha) {
+            meuGraficoLinha.data.labels = novasLabels;
+            meuGraficoLinha.data.datasets[0].data = dadosEntradas;
+            meuGraficoLinha.data.datasets[1].data = dadosSaidas;
+            meuGraficoLinha.update();
+        }
 
-        document.getElementById('vagas-count').innerText = Math.max(...dadosEntradas);
-        document.getElementById('eventos-count').innerText = Math.max(...dadosSaidas);
-        
-        document.getElementById('turno-manha').innerText = dadosEntradas[0] || "--";
-        document.getElementById('turno-tarde').innerText = dadosEntradas[2] || "--";
-        document.getElementById('turno-noite').innerText = dadosEntradas[4] || "--";
-        
-        console.log("✅ Todos os gráficos foram atualizados pela IA!");
+        if (meuGraficoBarra) {
+            meuGraficoBarra.data.labels = novasLabels.slice(0, 4);
+            meuGraficoBarra.data.datasets[0].data = dadosEntradas.slice(0, 4);
+            meuGraficoBarra.update();
+        }
+
+        const fluxoTotal = dadosEntradas.reduce((a, b) => a + b, 0);
+        if (meuGraficoPizza) {
+            meuGraficoPizza.data.datasets[0].data = [Math.round(fluxoTotal * 0.8), Math.round(fluxoTotal * 0.2)];
+            meuGraficoPizza.update();
+        }
+
+        /* === ATUALIZAÇÃO DAS GAUGES (TEXTO) === */
+        const elEntradas = document.getElementById('vagas-count');
+        const elSaidas = document.getElementById('eventos-count');
+
+        if (elEntradas) {
+            // Soma todos os valores de entrada retornados pela IA
+            const totalEntradas = dadosEntradas.reduce((a, b) => a + b, 0);
+            elEntradas.innerText = Math.round(totalEntradas);
+        }
+
+        if (elSaidas) {
+            // Soma todos os valores de saída (que você calculou como 75% da entrada)
+            const totalSaidas = dadosSaidas.reduce((a, b) => a + b, 0);
+            elSaidas.innerText = Math.round(totalSaidas);
+        }
 
     } catch (error) {
-        console.error("Erro ao buscar dados da IA:", error);
+        console.error("❌ Erro na IA:", error);
     }
 }
 
-function atualizarGraficoLinha(entradas, saidas) {
-    if (meuGraficoLinha) {
-        meuGraficoLinha.data.datasets[0].data = entradas;
-        meuGraficoLinha.data.datasets[1].data = saidas;
-        meuGraficoLinha.update();
-    }
-}
-
-function atualizarGraficoBarra(dados) {
-    if (meuGraficoBarra) {
-        meuGraficoBarra.data.datasets[0].data = dados;
-        meuGraficoBarra.update();
-    }
-}
-
-function atualizarGraficoPizza(carros, caminhoes) {
-    if (meuGraficoPizza) {
-        meuGraficoPizza.data.datasets[0].data = [carros, caminhoes];
-        meuGraficoPizza.update();
-    }
-}
-
-/* ==============================================
-   EXECUÇÃO INICIAL
-   ============================================== */
 window.onload = () => {
     inicializarGraficos();
-    buscarPrevisoesIA();
+    configurarNavegacao();
+    buscarPrevisoesIA(); 
 };
