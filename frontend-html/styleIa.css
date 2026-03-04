@@ -291,7 +291,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 40%;           
+    top: 30%;           
     left: 20%;          
     transform: translate(-50%, -50%); 
     z-index: 10;        
@@ -304,7 +304,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    top: 40%;           
+    top: 30%;           
     left: 80%;          
     transform: translate(-50%, -50%); 
     z-index: 10;        
@@ -401,48 +401,49 @@ h1 {
 }
 
 
-.chart-box { 
-    background: rgba(22, 27, 34, 0.6); 
-    border: 1px solid #30363d;
-     border-radius: 12px; 
-     padding: 15px; 
-     display: flex; 
-     flex-direction: column; 
+.chart-box.main-chart { 
+    position: relative; 
+    flex: 1; 
+    margin-right: 35px;
+    padding-top: 20px; 
 }
 
 .main-chart { 
     flex: 1; 
+    margin-right: 35px;
 }
 
 .canvas-container { 
     position: relative; 
     width: 100%; 
     height: 100%; 
-    flex: 1; 
-    min-height: 200px;
+    min-height: 419px;
 }
 
 .canvas-container.small { 
-    min-height: 150px; 
+    min-height: 250px; 
 }
 
 .chart-header { 
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    z-index: 10; 
     display: flex; 
-    justify-content: space-between; 
-    align-items: flex-start; 
-    margin-bottom: 10px; 
+    justify-content: flex-end; 
+    pointer-events: none; 
 }
 
 .legend {
-     font-size: 12px; 
-     text-align: right; 
-     line-height: 1.5; 
+    font-size: 24px; 
+    text-align: right; 
+    line-height: 1.5; 
 }
 
 .dot { 
     display: inline-block;
-    width: 8px; 
-    height: 8px; 
+    width: 12px; 
+    height: 12px; 
     border-radius: 50%; 
     margin-right: 5px; 
 }
@@ -455,7 +456,6 @@ h1 {
     background: #1f6feb;
 }
 
-/* Container que agrupa os dois boxes de gráfico */
 .bottom-charts { 
     display: flex; 
     gap: 15px; 
@@ -464,11 +464,10 @@ h1 {
     left: 25px; 
     right: 25px;
     z-index: 100;       
-    height: 190px;      /* Altura definida para o Chart.js respirar */
+    height: 1  90px;      
     pointer-events: none; 
 }
 
-/* Os boxes individuais */
 .chart-box { 
     flex: 1;
     background: rgba(10, 17, 20, 0.8); 
@@ -479,13 +478,12 @@ h1 {
     display: flex; 
     flex-direction: column; 
     pointer-events: auto;
-    overflow: hidden; /* Garante que o gráfico não escape do box */
+    overflow: hidden;
 }
 
-/* Onde o Canvas efetivamente mora */
 .canvas-container.small { 
     flex: 1;
-    position: relative; /* ESSENCIAL para o Chart.js */
+    position: relative; 
     width: 100%;
     height: 100%;
     min-height: 0; 
@@ -499,13 +497,13 @@ h1 {
     left: 25px; 
     right: 25px;
     z-index: 100;       
-    height: 200px; /* Aumentei um pouco para caber os títulos */
-    pointer-events: auto; /* Mude para auto */
+    height: 200px;
+    pointer-events: auto; 
 }
 
 .canvas-container.small { 
     flex: 1;
     position: relative; 
     width: 100%;
-    height: 100%; /* Isso força o canvas a ocupar o box */
+    height: 100%; 
 }
