@@ -455,3 +455,57 @@ h1 {
     background: #1f6feb;
 }
 
+/* Container que agrupa os dois boxes de gráfico */
+.bottom-charts { 
+    display: flex; 
+    gap: 15px; 
+    position: absolute;
+    bottom: 25px;       
+    left: 25px; 
+    right: 25px;
+    z-index: 100;       
+    height: 190px;      /* Altura definida para o Chart.js respirar */
+    pointer-events: none; 
+}
+
+/* Os boxes individuais */
+.chart-box { 
+    flex: 1;
+    background: rgba(10, 17, 20, 0.8); 
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(33, 209, 209, 0.3);
+    border-radius: 12px; 
+    padding: 15px; 
+    display: flex; 
+    flex-direction: column; 
+    pointer-events: auto;
+    overflow: hidden; /* Garante que o gráfico não escape do box */
+}
+
+/* Onde o Canvas efetivamente mora */
+.canvas-container.small { 
+    flex: 1;
+    position: relative; /* ESSENCIAL para o Chart.js */
+    width: 100%;
+    height: 100%;
+    min-height: 0; 
+}
+
+.bottom-charts { 
+    display: flex; 
+    gap: 15px; 
+    position: absolute;
+    bottom: 25px;       
+    left: 25px; 
+    right: 25px;
+    z-index: 100;       
+    height: 200px; /* Aumentei um pouco para caber os títulos */
+    pointer-events: auto; /* Mude para auto */
+}
+
+.canvas-container.small { 
+    flex: 1;
+    position: relative; 
+    width: 100%;
+    height: 100%; /* Isso força o canvas a ocupar o box */
+}

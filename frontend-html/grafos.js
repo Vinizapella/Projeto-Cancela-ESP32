@@ -1,4 +1,5 @@
 Chart.defaults.color = '#8b949e';
+Chart.defaults.font.family = "'Segoe UI', sans-serif";
 
 // Gráfico de Linhas (Esquerda)
 const ctxLinha = document.getElementById('linhaChart').getContext('2d');
@@ -25,8 +26,7 @@ new Chart(ctxLinha, {
     },
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
 });
-
-// Gráfico de Barras (Direita)
+// Gráfico de Barras
 const ctxBarra = document.getElementById('barraChart').getContext('2d');
 new Chart(ctxBarra, {
     type: 'bar',
@@ -36,13 +36,21 @@ new Chart(ctxBarra, {
             label: 'Fluxo',
             data: [100, 180, 260, 50],
             backgroundColor: '#00e5ff',
-            borderRadius: 4
+            borderRadius: 5
         }]
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    options: { 
+        responsive: true, 
+        maintainAspectRatio: false, // Permite que ele preencha o container small
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { display: false },
+            x: { grid: { display: false }, ticks: { color: '#8b949e' } }
+        }
+    }
 });
 
-// Gráfico de Pizza (Apenas Carros e Caminhões)
+// Gráfico de Pizza
 const ctxPizza = document.getElementById('pizzaChart').getContext('2d');
 new Chart(ctxPizza, {
     type: 'pie',
@@ -50,7 +58,7 @@ new Chart(ctxPizza, {
         labels: ['Carros', 'Caminhões'],
         datasets: [{
             data: [75, 25],
-            backgroundColor: ['#1f6feb', '#00ff88'], // Azul e Verde
+            backgroundColor: ['#1f6feb', '#00ff88'],
             borderWidth: 0
         }]
     },
@@ -58,7 +66,10 @@ new Chart(ctxPizza, {
         responsive: true, 
         maintainAspectRatio: false,
         plugins: { 
-            legend: { position: 'right', labels: { color: '#e6edf3' } } 
+            legend: { 
+                position: 'right', 
+                labels: { color: '#e6edf3', padding: 10, font: { size: 10 } } 
+            } 
         } 
     }
 });
