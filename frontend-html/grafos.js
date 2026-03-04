@@ -1,5 +1,4 @@
 Chart.defaults.color = '#8b949e';
-Chart.defaults.font.family = "'Segoe UI', sans-serif";
 
 // Gráfico de Linhas (Esquerda)
 const ctxLinha = document.getElementById('linhaChart').getContext('2d');

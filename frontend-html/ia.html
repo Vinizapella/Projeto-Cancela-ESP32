@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Controle de Cancela</title>
     <link rel="stylesheet" href="styleIa.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -78,8 +79,17 @@
                         <h2>Previsao de Entradas e Saidas</h2>
                     </div>
 
-                    <div class="verification-container">
-                        
+                    <div class="chart-box main-chart">
+                        <div class="chart-header">
+                            <h3>Previsão de Entradas e Saídas</h3>
+                            <div class="legend">
+                                <span class="dot entradas"></span> Entradas</span><br>
+                                <span class="dot saidas"></span> Saídas </span>
+                            </div>
+                        </div>
+                        <div class="canvas-container">
+                            <canvas id="linhaChart"></canvas>
+                        </div>
                     </div>
                 </section>
 
@@ -143,4 +153,6 @@
     </main>
 
 </body>
+
+<script src="grafos.js"></script>
 </html>
