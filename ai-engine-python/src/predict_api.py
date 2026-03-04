@@ -6,10 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-# Carrega variáveis de ambiente
 load_dotenv()
-
-app = FastAPI(title="Previsor IA - Cancela Zapella")
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,16 +17,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ajuste do caminho conforme sua estrutura src/models
+# Caminho corrigido para src/models
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'models', 'modelo_cancela.pkl')
 
 try:
     modelo = joblib.load(MODEL_PATH)
-    print("🧠 Modelo Preditivo Carregado!")
+    print("🧠 IA Carregada com Sucesso!")
 except Exception as e:
     modelo = None
-    print(f"⚠️ Erro ao carregar o modelo: {e}")
+    print(f"⚠️ Erro: {e}")
 
 class DadosEntrada(BaseModel):
     hora: int
@@ -37,41 +35,23 @@ class DadosEntrada(BaseModel):
 
 @app.post("/prever")
 def realizar_previsao(entrada: DadosEntrada):
-    if modelo is None:
-        return {"status": "erro", "mensagem": "Modelo ausente."}
+    if modelo is None: return {"status": "erro"}
 
     try:
-        # LÓGICA PARA MUDAR DE HORA PARA DIA
-        # Se recebermos hora -1, calculamos a soma das previsões do dia todo
+        # Modo Semana (Soma o dia)
         if entrada.hora == -1:
-            # Simulamos as principais horas de movimento (ex: 06h às 22h)
-            horas_foco = [6, 8, 10, 12, 14, 16, 18, 20, 22]
-            total_dia = 0
-            
-            for h in horas_foco:
+            horas_dia = [6, 10, 14, 18, 22, 2]
+            total = 0
+            for h in horas_dia:
                 t = 1 if 6 <= h < 14 else 2 if 14 <= h < 22 else 3
-                df = pd.DataFrame([[h, entrada.dia_semana, t]], 
-                                 columns=['hora_num', 'dia_semana', 'turno'])
-                total_dia += modelo.predict(df)[0]
-            
-            return {
-                "status": "sucesso",
-                "fluxo_estimado": round(float(total_dia), 2),
-                "unidade": "veículos/dia"
-            }
+                df = pd.DataFrame([[h, entrada.dia_semana, t]], columns=['hora_num', 'dia_semana', 'turno'])
+                total += modelo.predict(df)[0]
+            return {"fluxo_estimado": round(float(total), 2)}
 
-        # PREVISÃO NORMAL (POR HORA)
-        input_df = pd.DataFrame(
-            [[entrada.hora, entrada.dia_semana, entrada.turno]], 
-            columns=['hora_num', 'dia_semana', 'turno']
-        )
-        predicao = modelo.predict(input_df)[0]
-        
-        return {
-            "status": "sucesso",
-            "fluxo_estimado": round(float(predicao), 2),
-            "unidade": "veículos/hora"
-        }
+        # Modo Hora Individual
+        df = pd.DataFrame([[entrada.hora, entrada.dia_semana, entrada.turno]], columns=['hora_num', 'dia_semana', 'turno'])
+        predicao = modelo.predict(df)[0]
+        return {"fluxo_estimado": round(float(predicao), 2)}
 
     except Exception as e:
         return {"status": "erro", "mensagem": str(e)}
