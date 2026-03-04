@@ -42,7 +42,7 @@
                         <div class="option">
                             <button class="button-time">Horários</button>
                             <button class="button-ia">Modo IA</button>
-                            <button onclick="baixarRelatorio()" class="button-ia">Baixar CSV</button>
+                            <button id="btn-baixar-csv" class="button-ia">Baixar CSV</button>
                             <button id="btn-refresh" class="btn-pill" style="background:#1f1f1f;" aria-label="Atualizar dados"></button>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
 
                         <div class="shift-grid">
                             <div class="shift-column">
-                                <button class="btn-pill btn-morning active" id="Matutino">Primeiro turno</button>
+                                <button class="btn-pill btn-morning btn-inactive" id="Matutino">Primeiro turno</button>
                             </div>
                             <div class="shift-column">
                                 <button class="btn-pill btn-inactive" id="Vespertino">Segundo turno</button>

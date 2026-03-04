@@ -178,6 +178,9 @@ async function carregarDados() {
         renderizarLista(dados);
         atualizarGaugeEventos(dados.length);
 
+        elementos.eventosCount.textContent = dados.length;
+
+
     } catch (error) {
         console.error("Erro ao carregar dados:", error);
         elementos.listaTexto.innerHTML = '<div class="employee-row"><span>Erro ao carregar</span></div>';
@@ -249,3 +252,35 @@ window.addEventListener('load', () => {
     carregarDados();
     setInterval(carregarDados, 5000);
 });
+
+
+const btnBaixarCsv = document.getElementById('btn-baixar-csv');
+
+if (btnBaixarCsv) {
+    btnBaixarCsv.addEventListener('click', async () => {
+        try {
+            const response = await fetch(`${API_BASE}/entradas/relatorio/excel`); 
+            
+            if (!response.ok) {
+                throw new Error("Erro ao gerar o arquivo no servidor");
+            }
+
+            const blob = await response.blob();
+            
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'relatorio_cancela.csv'; 
+            
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+        } catch (error) {
+            console.error("Falha ao baixar CSV:", error);
+            alert("Não foi possível baixar o relatório. Verifique o console.");
+        }
+    });
+}
