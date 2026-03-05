@@ -1,7 +1,14 @@
 /* ==============================================
+   FONTE
+   ============================================== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@200&display=swap');
+
+
+/* ==============================================
     RESET E ESTILO GLOBAL
    ============================================== */
 body {
+    font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
     background-color: #0A1114; 
@@ -9,24 +16,100 @@ body {
     margin-left: 40px;
 }
 
+
 /* ==============================================
-    HEADER (barra lateral esquerda)
+   REGRAS REUTILIZÁVEIS DE EFEITO AZUL (Glow)
+   ============================================== */
+.main-left, .main-right, .main-right-right, .chart-box {
+    background-color: #1A2326 !important;
+    border: 1px solid rgba(33, 209, 209, 0.2) !important;
+    box-shadow: 0 0 20px rgba(33, 209, 209, 0.15), 
+                0 0 10px rgba(33, 209, 209, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-left:hover, .main-right:hover, .main-right-right:hover {
+    box-shadow: 0 0 30px rgba(33, 209, 209, 0.25);
+}
+
+/* ==============================================
+   AJUSTES ESPECÍFICOS DOS COMPONENTES
+   ============================================== */
+
+.main-content {
+    height: 70px;
+    width: 570px;
+    margin-top: 35px;
+    background: linear-gradient(-145deg, transparent 20%, #1A2326 20.5%);
+    border-radius: 20px 20px 0 0;
+    border-left: 1px solid rgba(33, 209, 209, 0.2);
+    border-top: 1px solid rgba(33, 209, 209, 0.2);
+}
+
+.main-left {
+    width: 815px;
+    height: 220px;
+    border-radius: 0px 20px 20px 20px; 
+    margin-top: -20px; 
+    position: relative;
+    z-index: 2;
+}
+
+.main-right {
+    margin-top: 20px;
+    color: white;
+    padding: 1px 0 10px 25px;
+    border-radius: 20px;
+    width: 790px;
+}
+
+.main-right-right {
+    position: relative; 
+    color: white;
+    margin-left: 320px;
+    border-radius: 20px;
+    width: 780px;
+    height: 846px;
+    margin-top: 35px;
+    overflow: hidden; 
+}
+
+.chart-box { 
+    background: rgba(26, 35, 38, 0.9) !important; 
+    backdrop-filter: blur(10px); 
+    border-radius: 12px; 
+    padding: 15px; 
+    pointer-events: auto;
+}
+
+h1, .gate-title {
+    text-shadow: 0 0 15px rgba(33, 209, 209, 0.6);
+}
+
+.button-ia {
+    background-color: transparent;
+    color: #ffffff;
+    border: 1px solid #21D1D1;
+    box-shadow: inset 0 0 10px rgba(33, 209, 209, 0.2);
+}
+/* ==============================================
+    HEADER (Barra Lateral Esquerda - Azul/Padrão)
    ============================================== */
 header {
     background-color: #1A2326; 
-    display: flex;
-    flex-direction: column;
-    height: 846px;
-    width: 140px; 
-    border-radius: 20px;
-    margin: 35px;
-    padding: 40px 0; 
-    box-sizing: border-box;
-    margin-right: 50px;
-    position: relative; 
     box-shadow: 0 0 25px rgba(33, 209, 209, 0.3), 
                 0 0 10px rgba(33, 209, 209, 0.2);
     border: 1px solid rgba(33, 209, 209, 0.2); 
+    display: flex;
+    flex-direction: column;
+    height: 846px;
+    width: 150px; 
+    border-radius: 20px;
+    margin: 35px;
+    margin-right: 70px; 
+    padding: 30px 0; 
+    box-sizing: border-box;
+    position: relative; 
     overflow: hidden; 
 }
 
@@ -39,8 +122,8 @@ header {
 }
 
 .logo-header {
-    width: 65px; 
-    height: 65px;
+    width: 75px; 
+    height: 75px;
     object-fit: contain;
 }
 
@@ -48,7 +131,7 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 35px; 
+    gap: 30px; 
     margin-bottom: 10px;
 }
 
@@ -60,28 +143,27 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
 }
 
 .gear-icon {
-    width: 55px; 
-    height: 55px;
+    width: 50px; 
+    height: 50px;
     filter: brightness(0.6); 
     transition: filter 0.3s, transform 0.3s;
 }
 
 .gear-btn:hover .gear-icon {
-    filter: brightness(1) drop-shadow(0 0 8px #21D1D1); 
+    filter: brightness(1);
     transform: rotate(45deg);
 }
 
 .profile-img {
-    width: 55px;
-    height: 55px;
+    width: 70px; 
+    height: 70px;
     border-radius: 50%; 
     background-size: cover;
     background-position: center;
-    border: 3px solid #21D1D1; 
-    box-shadow: 0 0 15px rgba(33, 209, 209, 0.4); 
     object-fit: cover;
 }
 
@@ -95,7 +177,7 @@ main {
 
 .main-content {
     height: 70px;
-    width: 600px;
+    width: 570px;
     margin-top: 35px;
     background: linear-gradient(-145deg, transparent 20%, #1A2326 20.5%);
     border-radius: 20px 20px 0 0; 
@@ -112,7 +194,7 @@ main {
 h1 {
     color: white;
     margin-left: 20px;
-    font-size: 35px;
+    font-size: 33px;
     margin-bottom: 5px;
     padding-bottom: 10px;
 }
@@ -256,10 +338,7 @@ h1 {
     width: 790px;
 }
 
-.title-main-right-top h2 {
-    font-size: 2rem;
-    margin-bottom: 15px;
-}
+
 
 /* ==============================================
     ESTILOS DOS GRÁFICOS (Da esquerda)
@@ -394,7 +473,6 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
     color: white;
 }
 
@@ -440,6 +518,7 @@ h1 {
     display: flex;
     flex-direction: column;
     line-height: 1.1;
+    margin-top: 10px;
 }
 
 .gate-title {
