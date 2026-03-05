@@ -1,21 +1,21 @@
 import os
-from dotenv import load_dotenv
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ENV_PATH = os.path.join(BASE_DIR, "../../../.env")
-load_dotenv(ENV_PATH)
-
-import os
 import joblib
 import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+# --- AJUSTE DE CAMINHO INTELIGENTE ---
+# Encontra a raiz do projeto (ai-engine-python) independente de onde você rode
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+ENV_PATH = BASE_DIR / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
+
 app = FastAPI()
 
+# Mantém o CORS para o seu JavaScript (Frontend) funcionar
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,16 +24,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Caminho corrigido para src/models
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.abspath(os.path.join(BASE_DIR, '../../../models/modelo_cancela.pkl'))
+# Caminho absoluto para o modelo salvo pelo novo trainer
+MODEL_PATH = BASE_DIR / "models" / "modelo_cancela.pkl"
 
 try:
-    modelo = joblib.load(MODEL_PATH)
-    print("🧠 IA Carregada com Sucesso!")
+    if MODEL_PATH.exists():
+        modelo = joblib.load(MODEL_PATH)
+        print("🧠 IA Carregada com Sucesso da pasta raiz!")
+    else:
+        modelo = None
+        print(f"⚠️ Erro: Arquivo não encontrado em {MODEL_PATH}")
 except Exception as e:
     modelo = None
-    print(f"⚠️ Erro: {e}")
+    print(f"⚠️ Erro ao carregar modelo: {e}")
 
 class DadosEntrada(BaseModel):
     hora: int
@@ -42,10 +45,11 @@ class DadosEntrada(BaseModel):
 
 @app.post("/prever")
 def realizar_previsao(entrada: DadosEntrada):
-    if modelo is None: return {"status": "erro"}
+    if modelo is None: 
+        return {"status": "erro", "mensagem": "Modelo não carregado no servidor"}
 
     try:
-        # Modo Semana (Soma o dia)
+        # Modo Semana (Soma o dia) - Se hora for -1
         if entrada.hora == -1:
             horas_dia = [6, 10, 14, 18, 22, 2]
             total = 0
@@ -65,4 +69,5 @@ def realizar_previsao(entrada: DadosEntrada):
 
 if __name__ == "__main__":
     import uvicorn
+    # Roda na porta 8000
     uvicorn.run(app, host="0.0.0.0", port=8000)

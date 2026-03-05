@@ -1,16 +1,14 @@
 import os
-from dotenv import load_dotenv
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ENV_PATH = os.path.join(BASE_DIR, "../../../.env")
-load_dotenv(ENV_PATH)
-
-import os
 import pandas as pd
 from pymongo import MongoClient
 from dotenv import load_dotenv
+from pathlib import Path
 
-load_dotenv()
+# --- AJUSTE DE CAMINHO ---
+# Para sair de 'src/services' e chegar na raiz, sobe 2 níveis
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+ENV_PATH = BASE_DIR / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
 
 def gerar_relatorio_diario():
     try:
@@ -21,24 +19,27 @@ def gerar_relatorio_diario():
         dados = list(colecao.find({}, {"evento": 1, "data": 1, "_id": 0}))
         
         if not dados:
-            print("❌ Banco de dados vazio!")
+            print("❌ Banco de dados vazio! Rode o data_generator primeiro.")
             return
 
         df = pd.DataFrame(dados)
         df['dt'] = pd.to_datetime(df['data']).dt.date 
 
-        relatorio = df[df['evento'].isin(['Carro Entrando', 'Carro Saindo', 'ALARME: Tempo Excedido'])]
-        
-        resumo = relatorio.groupby(['dt', 'evento']).size().unstack(fill_value=0)
+        # Agrupamento por dia e tipo de evento
+        resumo = df.groupby(['dt', 'evento']).size().unstack(fill_value=0)
 
-        print("\n📊 RELATÓRIO DE MOVIMENTAÇÃO DIÁRIA")
-        print("=" * 60)
+        print("\n📊 RELATÓRIO DE MOVIMENTAÇÃO ZAPELLA")
+        print("=" * 70)
         print(resumo)
-        print("=" * 60)
-        print(f"Total de registros analisados: {len(df)}")
+        print("-" * 70)
+        
+        total_alarmes = df[df['evento'] == 'ALARME: Tempo Excedido'].shape[0]
+        print(f"🚨 Total de Caminhões (Alarmes): {total_alarmes}")
+        print(f"📦 Total de Registros: {len(df)}")
+        print("=" * 70)
 
     except Exception as e:
-        print(f"❌ Erro: {e}")
+        print(f"❌ Erro ao gerar relatório: {e}")
 
 if __name__ == "__main__":
     gerar_relatorio_diario()

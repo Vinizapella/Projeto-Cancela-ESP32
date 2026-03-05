@@ -1,87 +1,88 @@
 import os
-from dotenv import load_dotenv
-
-# Pega o caminho do arquivo atual e sobe 2 pastas
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ENV_PATH = os.path.join(BASE_DIR, "../../.env")
-load_dotenv(ENV_PATH)
-import os
 import random
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
+from pathlib import Path
 
-load_dotenv()
+# Ajuste automático de caminho para o .env na raiz da pasta ai-engine-python
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_PATH = BASE_DIR / ".env"
+load_dotenv(dotenv_path=ENV_PATH)
 
-def gerar_sistema_completo(total_dias=14):
-    client = MongoClient(os.getenv("MONGO_URI"))
-    db = client[os.getenv("DATABASE_NAME")]
-    colecao = db[os.getenv("COLLECTION_NAME")]
+def gerar_fluxo_completo(total_dias=14):
+    uri = os.getenv("MONGO_URI")
+    db_name = os.getenv("DATABASE_NAME")
+    coll_name = os.getenv("COLLECTION_NAME")
 
-    registros = []
-    agora = datetime.now()
-    data_inicial = agora - timedelta(days=total_dias)
+    try:
+        client = MongoClient(uri)
+        db = client[db_name]
+        colecao = db[coll_name]
 
-    print(f"🚀 Iniciando geração massiva: Carros (1000/turno) + Caminhões (80/dia)")
+        agora = datetime.now()
+        data_inicial = agora - timedelta(days=total_dias)
 
-    atual = data_inicial
-    while atual <= agora:
-        if atual.weekday() < 5:  
-            for hora in range(24):
-                qtd_carros = 0
-                if 5 <= hora <= 7: qtd_carros = random.randint(300, 400)    
-                elif 8 <= hora <= 9: qtd_carros = random.randint(400, 500)  
-                elif 13 <= hora <= 14: qtd_carros = random.randint(450, 550)
-                elif 21 <= hora <= 22: qtd_carros = random.randint(150, 250)
-                elif 10 <= hora <= 18: qtd_carros = random.randint(10, 30)  
-                else: qtd_carros = random.randint(0, 5)
+        print(f"🚀 Gerando Fluxo Zapella (Entradas e Saídas) para {total_dias} dias...")
 
-                for _ in range(qtd_carros):
-                    dt_ent = atual.replace(hour=hora, minute=random.randint(0,59), second=random.randint(0,59))
-                    if dt_ent > agora: continue
+        atual = data_inicial
+        while atual <= agora:
+            if atual.weekday() < 5:  # Segunda a Sexta
+                registros_dia = []
+                
+                for hora in range(24):
+                    # Definição de volume por turno (Baseado no seu relato)
+                    if 5 <= hora <= 7:     qtd = random.randint(600, 800) # Pico T1
+                    elif 13 <= hora <= 14: qtd = random.randint(400, 550) # Pico T2
+                    elif 21 <= hora <= 22: qtd = random.randint(150, 300) # Pico T3
+                    elif 8 <= hora <= 18:  qtd = random.randint(20, 50)   # Comercial
+                    else:                  qtd = random.randint(0, 10)    # Madrugada
 
-                    registros.append({
-                        "evento": "Carro Entrando",
-                        "data": dt_ent.isoformat(),
-                        "hora": hora,
-                        "dispositivo": "Simulador_Zapella_V3"
-                    })
-
-                    dt_sai = dt_ent + timedelta(hours=8, minutes=random.randint(0, 15))
-                    if dt_sai <= agora:
-                        registros.append({
-                            "evento": "Carro Saindo",
-                            "data": dt_sai.isoformat(),
-                            "hora": dt_sai.hour,
-                            "dispositivo": "Simulador_Zapella_V3"
+                    for _ in range(qtd):
+                        # --- GERAÇÃO DA ENTRADA ---
+                        dt_ent = atual.replace(hour=hora, minute=random.randint(0,59), second=random.randint(0,59))
+                        if dt_ent > agora: continue
+                        
+                        registros_dia.append({
+                            "evento": "Carro Entrando",
+                            "data": dt_ent.isoformat(),
+                            "tipo": "funcionario"
                         })
 
-            for _ in range(80):
-                h_cam = random.randint(6, 20)
-                m_cam = random.randint(0, 50)
-                dt_cam_ent = atual.replace(hour=h_cam, minute=m_cam)
-                
-                if dt_cam_ent <= agora:
-                    registros.append({"evento": "ALARME: Tempo Excedido", "data": dt_cam_ent.isoformat(), "hora": h_cam, "dispositivo": "Cancela_Caminhao"})
-                    registros.append({"evento": "Aberta por: Botao Fisico", "data": (dt_cam_ent + timedelta(seconds=30)).isoformat(), "hora": h_cam, "dispositivo": "Cancela_Caminhao"})
-                    
-                    dt_cam_sai = dt_cam_ent + timedelta(hours=random.randint(2, 4))
-                    if dt_cam_sai <= agora:
-                        registros.append({"evento": "ALARME: Tempo Excedido", "data": dt_cam_sai.isoformat(), "hora": dt_cam_sai.hour, "dispositivo": "Cancela_Caminhao"})
-                        registros.append({"evento": "Aberta por: Botao Fisico", "data": (dt_cam_sai + timedelta(seconds=30)).isoformat(), "hora": dt_cam_sai.hour, "dispositivo": "Cancela_Caminhao"})
-                        registros.append({"evento": "Carro Saindo", "data": (dt_cam_sai + timedelta(seconds=60)).isoformat(), "hora": dt_cam_sai.hour, "dispositivo": "Cancela_Caminhao"})
+                        # --- GERAÇÃO DA SAÍDA (Simula 8h a 9h de trabalho) ---
+                        atraso_saida = timedelta(hours=8, minutes=random.randint(0, 45))
+                        dt_sai = dt_ent + atraso_saida
+                        
+                        if dt_sai <= agora:
+                            registros_dia.append({
+                                "evento": "Carro Saindo",
+                                "data": dt_sai.isoformat(),
+                                "tipo": "funcionario"
+                            })
 
-        if len(registros) > 5000:
-            colecao.insert_many(registros)
-            registros = []
-            print(f"📡 Lote de 5000 registros enviado... (Data: {atual.date()})")
-        
-        atual += timedelta(days=1)
+                # --- GERAÇÃO DE CAMINHÕES (80/dia - Apenas Entrada e Saída rápida) ---
+                for _ in range(random.randint(75, 85)):
+                    h_cam = random.randint(7, 19)
+                    dt_cam_ent = atual.replace(hour=h_cam, minute=random.randint(0,59))
+                    if dt_cam_ent <= agora:
+                        registros_dia.append({"evento": "ALARME: Tempo Excedido", "data": dt_cam_ent.isoformat(), "tipo": "caminhao"})
+                        
+                        # Caminhão sai em média 2 horas depois
+                        dt_cam_sai = dt_cam_ent + timedelta(hours=random.randint(1, 3))
+                        if dt_cam_sai <= agora:
+                            registros_dia.append({"evento": "Carro Saindo", "data": dt_cam_sai.isoformat(), "tipo": "caminhao"})
 
-    if registros:
-        colecao.insert_many(registros)
-    
-    print(f"✅ Finalizado! O banco agora reflete a realidade total da Zapella.")
+                # Envio em lote por dia para o Atlas
+                if registros_dia:
+                    colecao.insert_many(registros_dia)
+                    print(f"📡 {atual.date()}: {len(registros_dia)} movimentos sincronizados.")
+            
+            atual += timedelta(days=1)
+
+        print("✅ Banco de dados populado com Entradas e Saídas!")
+
+    except Exception as e:
+        print(f"❌ Erro na geração: {e}")
 
 if __name__ == "__main__":
-    gerar_sistema_completo(14)
+    gerar_fluxo_completo(14)
