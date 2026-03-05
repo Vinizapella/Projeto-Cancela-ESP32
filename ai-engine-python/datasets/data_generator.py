@@ -1,4 +1,11 @@
 import os
+from dotenv import load_dotenv
+
+# Pega o caminho do arquivo atual e sobe 2 pastas
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV_PATH = os.path.join(BASE_DIR, "../../.env")
+load_dotenv(ENV_PATH)
+import os
 import random
 from pymongo import MongoClient
 from dotenv import load_dotenv

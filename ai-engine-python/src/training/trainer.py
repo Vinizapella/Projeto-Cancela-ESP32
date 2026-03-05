@@ -1,4 +1,11 @@
 import os
+from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV_PATH = os.path.join(BASE_DIR, "../../../.env")
+load_dotenv(ENV_PATH)
+
+import os
 import pandas as pd
 import joblib
 from pymongo import MongoClient
@@ -6,7 +13,6 @@ from dotenv import load_dotenv
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
-# Carrega as variáveis de ambiente (.env)
 load_dotenv()
 
 MONGO_URI = os.getenv("MONGO_URI")
@@ -67,16 +73,16 @@ def treinar_modelo():
         print(f"📈 Precisão do modelo (R²): {precisao:.2f}")
 
         # Configura o diretório de salvamento
-        pasta_models = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models')
+        pasta_models = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../models'))
         os.makedirs(pasta_models, exist_ok=True)
         
         caminho_salvar = os.path.join(pasta_models, 'modelo_cancela.pkl')
         joblib.dump(modelo, caminho_salvar)
         
-        print(f"✅ Sucesso! O 'cérebro' da IA foi salvo em: {caminho_salvar}")
+        print(f"Sucesso! O 'cérebro' da IA foi salvo em: {caminho_salvar}")
 
     except Exception as e:
-        print(f"❌ Erro crítico durante o treinamento: {e}")
+        print(f"Erro crítico durante o treinamento: {e}")
 
 if __name__ == "__main__":
     treinar_modelo()

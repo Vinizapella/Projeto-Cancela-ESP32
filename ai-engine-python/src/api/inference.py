@@ -1,4 +1,11 @@
 import os
+from dotenv import load_dotenv
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ENV_PATH = os.path.join(BASE_DIR, "../../../.env")
+load_dotenv(ENV_PATH)
+
+import os
 import joblib
 import pandas as pd
 from fastapi import FastAPI
@@ -19,7 +26,7 @@ app.add_middleware(
 
 # Caminho corrigido para src/models
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'models', 'modelo_cancela.pkl')
+MODEL_PATH = os.path.abspath(os.path.join(BASE_DIR, '../../../models/modelo_cancela.pkl'))
 
 try:
     modelo = joblib.load(MODEL_PATH)

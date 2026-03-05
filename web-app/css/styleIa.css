@@ -20,7 +20,7 @@ body {
 /* ==============================================
    REGRAS REUTILIZÁVEIS DE EFEITO AZUL (Glow)
    ============================================== */
-.main-left, .main-right, .main-right-right, .chart-box {
+.main-right, .main-right-right, .chart-box {
     background-color: #1A2326 !important;
     border: 1px solid rgba(33, 209, 209, 0.2) !important;
     box-shadow: 0 0 20px rgba(33, 209, 209, 0.15), 
@@ -32,6 +32,17 @@ body {
     box-shadow: 0 0 30px rgba(33, 209, 209, 0.25);
 }
 
+.main-left {
+    background-color: #1A2326 !important;
+    border: 1px solid rgba(33, 209, 209, 0.2) !important;
+    border-top: none !important; 
+    box-shadow: 0 10px 20px rgba(33, 209, 209, 0.15), 
+                0 5px 10px rgba(33, 209, 209, 0.1);
+    
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
 /* ==============================================
    AJUSTES ESPECÍFICOS DOS COMPONENTES
    ============================================== */
@@ -42,15 +53,17 @@ body {
     margin-top: 35px;
     background: linear-gradient(-145deg, transparent 20%, #1A2326 20.5%);
     border-radius: 20px 20px 0 0;
-    border-left: 1px solid rgba(33, 209, 209, 0.2);
-    border-top: 1px solid rgba(33, 209, 209, 0.2);
+    filter: drop-shadow(0 0 10px rgba(33, 209, 209, 0.15))
+            drop-shadow(0 0 5px rgba(33, 209, 209, 0.1));
+            
+    transition: filter 0.3s ease;
 }
+
 
 .main-left {
     width: 815px;
     height: 220px;
     border-radius: 0px 20px 20px 20px; 
-    margin-top: -20px; 
     position: relative;
     z-index: 2;
 }
