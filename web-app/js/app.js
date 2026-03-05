@@ -135,17 +135,25 @@ function renderizarLista(dados) {
     }
 
     [...dados].reverse().slice(0, 30).forEach((item, index) => {
-        const nomeEvento = item.evento || (modoAtual === 'entrada' ? "Entrada" : "Saída");
-        
-        const divTexto = document.createElement('div');
-        divTexto.className = `employee-row ${index === 0 ? 'active-row' : ''}`;
-        divTexto.innerHTML = `<span>${nomeEvento}</span><span class="notif-time">${formatarHora(item.data)}</span>`;
-        scrollTexto.appendChild(divTexto);
-
         const divIcone = document.createElement('div');
         divIcone.className = 'side-icon-item';
-        const icone = nomeEvento.toLowerCase().includes('botao') || nomeEvento.toLowerCase().includes('caminhao') ? 'caminhao.png' : 'carro.png';
-        divIcone.innerHTML = `<img src="${icone}" style="width: 50px; object-fit: contain;" onerror="this.src='carro.png'">`;
+
+        // 1. Verifica se é um caminhão/botão físico baseado no nome do evento
+        const isTruck = nomeEvento.toLowerCase().includes('botao') || 
+                        nomeEvento.toLowerCase().includes('caminhao') ||
+                        nomeEvento.toLowerCase().includes('alarme');
+
+        // 2. Define o arquivo correto (usando os novos nomes)
+        const nomeArquivo = isTruck ? 'truck.png' : 'car.png';
+
+        // 3. Define o caminho completo: assets/nome_da_imagem
+        const caminhoCompleto = `assets/${nomeArquivo}`;
+
+        divIcone.innerHTML = `
+            <img src="${caminhoCompleto}" 
+                 style="width: 50px; object-fit: contain;" 
+                 onerror="this.src='assets/car.png'">
+        `;
         scrollIcones.appendChild(divIcone);
     });
 }
