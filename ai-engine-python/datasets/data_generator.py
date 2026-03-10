@@ -4,7 +4,6 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from pathlib import Path
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_PATH)

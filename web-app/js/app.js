@@ -225,6 +225,7 @@ elementos.btnTrocarStatus?.addEventListener('click', () => {
     carregarDados();
 });
 
+
 const btnTurnos = {
     1: document.getElementById('Matutino'),
     2: document.getElementById('Vespertino'),

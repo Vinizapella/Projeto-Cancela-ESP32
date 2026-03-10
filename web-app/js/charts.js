@@ -4,6 +4,7 @@
 let meuGraficoLinha, meuGraficoBarra, meuGraficoPizza;
 const periodosTexto = ["Amanhã", "Próxima Semana"];
 let indiceAtual = 0;
+let dadosEntradasAtuais = []; 
 
 /* ==============================================
     INICIALIZAÇÃO DOS GRÁFICOS
@@ -13,42 +14,55 @@ function inicializarGraficos() {
     meuGraficoLinha = new Chart(ctxLinha, {
         type: 'line',
         data: {
-            labels: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
+            labels: Array.from({length: 24}, (_, i) => `${String(i).padStart(2, '0')}:00`),
             datasets: [
                 {
                     label: 'Entradas (IA)',
-                    data: [0, 0, 0, 0, 0, 0],
+                    data: Array(24).fill(0),
                     borderColor: '#00e5ff',
                     backgroundColor: 'rgba(0, 229, 255, 0.05)',
                     fill: true,
                     tension: 0.4,
-                    borderWidth: 5,
-                    pointRadius: 7,
-                    pointBackgroundColor: '#00e5ff'
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#00e5ff',
+                    pointHoverRadius: 8
                 },
                 {
                     label: 'Saídas (IA)',
-                    data: [0, 0, 0, 0, 0, 0],
+                    data: Array(24).fill(0),
                     borderColor: '#1f6feb',
+                    backgroundColor: 'rgba(31, 111, 235, 0.05)',
+                    fill: true,
                     tension: 0.4,
-                    borderWidth: 5,
-                    pointRadius: 7,
-                    pointBackgroundColor: '#1f6feb'
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#1f6feb',
+                    pointHoverRadius: 8
                 }
             ]
         },
         options: { 
             responsive: true, 
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            animation: {
+                duration: 750,
+                easing: 'easeInOutQuart'
+            },
+            plugins: { 
+                legend: { 
+                    display: true,
+                    labels: { color: '#e6edf3', padding: 20, font: { size: 14 } }
+                } 
+            },
             scales: {
                 y: { 
                     beginAtZero: true, 
-                    ticks: { font: { size: 18 }, color: '#8b949e' }, 
-                    grid: { display: false } 
+                    ticks: { font: { size: 14 }, color: '#8b949e' }, 
+                    grid: { color: 'rgba(139, 148, 158, 0.1)' } 
                 },
                 x: { 
-                    ticks: { font: { size: 18 }, color: '#8b949e' }, 
+                    ticks: { font: { size: 12 }, color: '#8b949e' }, 
                     grid: { display: false } 
                 }
             }
@@ -59,25 +73,41 @@ function inicializarGraficos() {
     meuGraficoBarra = new Chart(ctxBarra, {
         type: 'bar',
         data: {
-            labels: ['06h', '10h', '14h', '18h', '22h', '02h'], 
+            labels: ['00h', '04h', '08h', '12h', '16h', '20h'], 
             datasets: [{
                 label: 'Fluxo Estimado',
                 data: [0, 0, 0, 0, 0, 0],
                 backgroundColor: '#00e5ff',
-                borderRadius: 8 
+                borderRadius: 12,
+                hoverBackgroundColor: '#1ff7ff'
             }]
         },
         options: { 
-            responsive: true, maintainAspectRatio: false, 
-            plugins: { legend: { display: false } },
+            responsive: true, 
+            maintainAspectRatio: false,
+            animation: {
+                duration: 600,
+                easing: 'easeInOutQuad'
+            },
+            plugins: { 
+                legend: { display: false },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#00e5ff',
+                    bodyColor: '#e6edf3',
+                    padding: 12,
+                    displayColors: false
+                }
+            },
             scales: {
                 y: { 
                     beginAtZero: true, 
-                    ticks: { font: { size: 17 }, color: '#8b949e' }, 
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' } 
+                    ticks: { font: { size: 14 }, color: '#8b949e' }, 
+                    grid: { color: 'rgba(139, 148, 158, 0.1)' } 
                 },
                 x: { 
-                    ticks: { font: { size: 17 }, color: '#8b949e' }, 
+                    ticks: { font: { size: 14 }, color: '#8b949e' }, 
                     grid: { display: false } 
                 }
             }
@@ -86,23 +116,42 @@ function inicializarGraficos() {
 
     const ctxPizza = document.getElementById('pizzaChart').getContext('2d');
     meuGraficoPizza = new Chart(ctxPizza, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: ['Carros', 'Caminhões'],
             datasets: [{
                 data: [0, 0],
-                backgroundColor: ['#1f6feb', '#00e5ff'],
-                borderWidth: 0
+                backgroundColor: ['#00e5ff', '#1f6feb'],
+                borderColor: '#1e1e2e',
+                borderWidth: 2
             }]
         },
         options: { 
-            responsive: true, maintainAspectRatio: false,
+            responsive: true, 
+            maintainAspectRatio: false,
+            animation: {
+                duration: 800,
+                easing: 'easeInOutQuart'
+            },
             plugins: { 
                 legend: { 
                     position: 'right', 
-                    labels: { color: '#e6edf3', padding: 20, font: { size: 18 } } 
-                } 
-            } 
+                    labels: { 
+                        color: '#e6edf3', 
+                        padding: 20, 
+                        font: { size: 14, weight: 'bold' }
+                    } 
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                            return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
         }
     });
 }
@@ -112,18 +161,18 @@ function inicializarGraficos() {
    ============================================== */
 async function buscarPrevisoesIA(periodo = 'amanha') {
     const hoje = new Date();
-    let labelsLinha;
     let endpoints = [];
 
     if (periodo === 'proxima-semana') {
-        labelsLinha = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
         endpoints = [0, 1, 2, 3, 4, 5, 6].map(d => ({ hora: -1, dia: d })); 
     } else {
-        labelsLinha = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
         let d = new Date();
         d.setDate(hoje.getDate() + 1);
         const diaSimulado = d.getDay();
-        endpoints = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22].map(h => ({ hora: h, dia: diaSimulado }));
+        endpoints = Array.from({length: 24}, (_, h) => ({ 
+            hora: h, 
+            dia: diaSimulado 
+        }));
     }
 
     try {
@@ -134,46 +183,75 @@ async function buscarPrevisoesIA(periodo = 'amanha') {
                 body: JSON.stringify({
                     hora: p.hora,
                     dia_semana: p.dia,
-                    turno: (p.hora >= 6 && p.hora < 14) ? 1 : (p.hora >= 14 && p.hora < 22) ? 2 : 3
+                    turno: (p.hora >= 5 && p.hora < 14) ? 1 : (p.hora >= 14 && p.hora < 23) ? 2 : 3
                 })
             }).then(res => res.json())
         );
 
         const resultados = await Promise.all(promessas);
-        const dadosEntradasFull = resultados.map(r => r.fluxo_estimado || 0);
-        const dadosSaidasFull = dadosEntradasFull.map(v => Math.round(v * 0.75));
-
-        if (meuGraficoLinha) {
-            meuGraficoLinha.data.labels = labelsLinha;
-            meuGraficoLinha.data.datasets[0].data = dadosEntradasFull;
-            meuGraficoLinha.data.datasets[1].data = dadosSaidasFull;
-            meuGraficoLinha.update();
-        }
-
-        if (meuGraficoBarra) {
-            if (periodo === 'proxima-semana') {
-                meuGraficoBarra.data.labels = labelsLinha;
-                meuGraficoBarra.data.datasets[0].data = dadosEntradasFull;
-            } else {
-                meuGraficoBarra.data.labels = ['06h', '10h', '14h', '18h', '22h', '02h'];
-                const dadosReduzidos = [
-                    dadosEntradasFull[3], dadosEntradasFull[5], dadosEntradasFull[7], 
-                    dadosEntradasFull[9], dadosEntradasFull[11], dadosEntradasFull[1]
-                ];
-                meuGraficoBarra.data.datasets[0].data = dadosReduzidos;
+        
+        if (periodo === 'proxima-semana') {
+            const dadosPorDia = resultados.map(r => Math.max(0, r.fluxo_estimado || 0));
+            dadosEntradasAtuais = dadosPorDia;
+            
+            const diasSemana = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+            
+            if (meuGraficoLinha) {
+                meuGraficoLinha.data.labels = diasSemana;
+                meuGraficoLinha.data.datasets[0].data = dadosPorDia;
+                meuGraficoLinha.data.datasets[1].data = dadosPorDia.map(v => Math.round(v * 0.75));
+                meuGraficoLinha.update();
             }
-            meuGraficoBarra.update();
+
+            if (meuGraficoBarra) {
+                meuGraficoBarra.data.labels = diasSemana;
+                meuGraficoBarra.data.datasets[0].data = dadosPorDia;
+                meuGraficoBarra.update();
+            }
+
+            const fluxoTotal = dadosPorDia.reduce((a, b) => a + b, 0);
+            if (meuGraficoPizza) {
+                meuGraficoPizza.data.datasets[0].data = [Math.round(fluxoTotal * 0.8), Math.round(fluxoTotal * 0.2)];
+                meuGraficoPizza.update();
+            }
+
+            document.getElementById('vagas-count').innerText = Math.round(fluxoTotal);
+            document.getElementById('eventos-count').innerText = Math.round(fluxoTotal * 0.75);
+        } else {
+            const dadosEntradasFull = resultados.map(r => Math.max(0, r.fluxo_estimado || 0));
+            const dadosSaidasFull = dadosEntradasFull.map(v => Math.round(v * 0.75));
+            
+            dadosEntradasAtuais = dadosEntradasFull;
+            
+            const labelsLinha = Array.from({length: 24}, (_, i) => `${String(i).padStart(2, '0')}:00`);
+
+            if (meuGraficoLinha) {
+                meuGraficoLinha.data.labels = labelsLinha;
+                meuGraficoLinha.data.datasets[0].data = dadosEntradasFull;
+                meuGraficoLinha.data.datasets[1].data = dadosSaidasFull;
+                meuGraficoLinha.update();
+            }
+
+            if (meuGraficoBarra) {
+                const horasPicos = [0, 4, 8, 12, 16, 20]; 
+                const labelsPicos = horasPicos.map(h => `${String(h).padStart(2, '0')}h`);
+                const dadosReduzidos = horasPicos.map(h => dadosEntradasFull[h] || 0);
+                
+                meuGraficoBarra.data.labels = labelsPicos;
+                meuGraficoBarra.data.datasets[0].data = dadosReduzidos;
+                meuGraficoBarra.update();
+            }
+
+            const fluxoTotal = dadosEntradasFull.reduce((a, b) => a + b, 0);
+
+            if (meuGraficoPizza) {
+                meuGraficoPizza.data.datasets[0].data = [Math.round(fluxoTotal * 0.8), Math.round(fluxoTotal * 0.2)];
+                meuGraficoPizza.update();
+            }
+
+            document.getElementById('vagas-count').innerText = Math.round(fluxoTotal);
+            document.getElementById('eventos-count').innerText = Math.round(fluxoTotal * 0.75);
         }
-
-        const fluxoTotal = dadosEntradasFull.reduce((a, b) => a + b, 0);
-
-        if (meuGraficoPizza) {
-            meuGraficoPizza.data.datasets[0].data = [Math.round(fluxoTotal * 0.8), Math.round(fluxoTotal * 0.2)];
-            meuGraficoPizza.update();
-        }
-
-        document.getElementById('vagas-count').innerText = Math.round(fluxoTotal);
-        document.getElementById('eventos-count').innerText = Math.round(fluxoTotal * 0.75);
 
     } catch (error) {
         console.error("Erro na IA:", error);
@@ -185,9 +263,9 @@ async function buscarPrevisoesIA(periodo = 'amanha') {
    ============================================== */
 function configurarFiltrosTurno() {
     const botoes = {
-        'Matutino': 0,   
-        'Vespertino': 2, 
-        'Noturno': 4     
+        'Matutino': 5,   
+        'Vespertino': 14, 
+        'Noturno': 23     
     };
 
     Object.keys(botoes).forEach(id => {
@@ -219,28 +297,49 @@ function configurarFiltrosTurno() {
 /* ==============================================
     LÓGICA DE FILTRAR INTERFACE POR TURNO
    ============================================== */
-function filtrarInterfacePorTurno(indice) {
+function filtrarInterfacePorTurno(horaInicio) {
     if (indiceAtual === 1) return; 
 
-    const valorEntrada = meuGraficoLinha.data.datasets[0].data[indice];
-    const valorSaida = meuGraficoLinha.data.datasets[1].data[indice];
+    let indicesFiltro = [];
+    let nomeTurno = '';
 
-    document.getElementById('vagas-count').innerText = Math.round(valorEntrada);
-    document.getElementById('eventos-count').innerText = Math.round(valorSaida);
+    if (horaInicio === 5) {
+        indicesFiltro = Array.from({length: 9}, (_, i) => 5 + i);
+        nomeTurno = 'Matutino';
+    } else if (horaInicio === 14) {
+        indicesFiltro = Array.from({length: 9}, (_, i) => 14 + i);
+        nomeTurno = 'Vespertino';
+    } else if (horaInicio === 23) {
+        indicesFiltro = [23, 0, 1, 2, 3, 4];
+        nomeTurno = 'Noturno';
+    }
+
+    const totalTurno = indicesFiltro.reduce((sum, idx) => sum + (dadosEntradasAtuais[idx] || 0), 0);
+    const totalSaidas = Math.round(totalTurno * 0.75);
+
+    document.getElementById('vagas-count').innerText = Math.round(totalTurno);
+    document.getElementById('eventos-count').innerText = totalSaidas;
 
     if (meuGraficoPizza) {
-        const carros = Math.round(valorEntrada * 0.8);
-        const caminhoes = Math.round(valorEntrada * 0.2);
+        const carros = Math.round(totalTurno * 0.8);
+        const caminhoes = Math.round(totalTurno * 0.2);
         meuGraficoPizza.data.datasets[0].data = [carros, caminhoes];
         meuGraficoPizza.update();
     }
 
-    meuGraficoLinha.data.datasets[0].pointRadius = meuGraficoLinha.data.datasets[0].data.map((_, i) => i === indice ? 12 : 0);
-    meuGraficoLinha.data.datasets[1].pointRadius = meuGraficoLinha.data.datasets[1].data.map((_, i) => i === indice ? 12 : 0);
+    meuGraficoLinha.data.datasets[0].pointRadius = meuGraficoLinha.data.datasets[0].data.map((_, i) => 
+        indicesFiltro.includes(i) ? 8 : 3
+    );
+    meuGraficoLinha.data.datasets[1].pointRadius = meuGraficoLinha.data.datasets[1].data.map((_, i) => 
+        indicesFiltro.includes(i) ? 8 : 3
+    );
     meuGraficoLinha.update();
 
     if (meuGraficoBarra) {
-        meuGraficoBarra.data.datasets[0].backgroundColor = meuGraficoBarra.data.datasets[0].data.map((_, i) => i === indice ? '#00e5ff' : 'rgba(0, 229, 255, 0.1)');
+        meuGraficoBarra.data.datasets[0].backgroundColor = meuGraficoBarra.data.datasets[0].data.map((_, i) => {
+            const hora = parseInt(meuGraficoBarra.data.labels[i]);
+            return indicesFiltro.includes(hora) ? '#00e5ff' : 'rgba(0, 229, 255, 0.2)';
+        });
         meuGraficoBarra.update();
     }
 }
