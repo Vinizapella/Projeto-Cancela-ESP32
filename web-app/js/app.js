@@ -50,10 +50,10 @@ const elementos = {
 // =============================================
 // ESTADO GLOBAL
 // =============================================
-let modoAtual = 'entrada'; // 'entrada' ou 'saida'
+let modoAtual = 'entrada'; 
 let indicePeriodo = 0;
 let todasAsNotificacoes = [];
-let turnoSelecionado = null; // null = sem turno ativo, 1, 2 ou 3
+let turnoSelecionado = null;
 
 function formatarHora(dataString) {
     if (!dataString) return "00/00/0000 00:00";
@@ -91,8 +91,6 @@ function getRotaAtual() {
 // GAUGES
 // =============================================
 
-// Barra cheia = todas as vagas livres (1381)
-// Barra vai descarregando conforme o estacionamento ocupa
 function atualizarGaugeVagas(vagasDisponiveis) {
     const path = document.getElementById('gauge-fill-vagas');
     if (!path) return;
@@ -104,7 +102,6 @@ function atualizarGaugeVagas(vagasDisponiveis) {
     path.style.stroke = '#d7ff00';
 }
 
-// Barra enche conforme quantidade de eventos no período
 function atualizarGaugeEventos(count) {
     const path = document.getElementById('gauge-fill-eventos');
     if (!path) return;
@@ -135,7 +132,6 @@ function renderizarLista(dados) {
     }
 
     [...dados].reverse().slice(0, 30).forEach((item, index) => {
-    // Mantemos sua lógica de nome de evento exatamente como estava
     const nomeEvento = item.evento || (modoAtual === 'entrada' ? "Entrada" : "Saída");
 
     const divTexto = document.createElement('div');
@@ -229,7 +225,6 @@ elementos.btnTrocarStatus?.addEventListener('click', () => {
     carregarDados();
 });
 
-// Botões de turno
 const btnTurnos = {
     1: document.getElementById('Matutino'),
     2: document.getElementById('Vespertino'),
@@ -252,7 +247,6 @@ function atualizarEstiloTurnos() {
     });
 });
 
-// Sincronização de scroll
 const sincronizarScroll = () => {
     elementos.listaIcones.scrollTop = elementos.listaTexto.scrollTop;
 };

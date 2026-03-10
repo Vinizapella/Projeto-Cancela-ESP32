@@ -20,7 +20,7 @@ def verificar():
     dados = list(colecao.find({}, {"data": 1, "_id": 0}))
     
     if not dados:
-        print("❌ Nenhum dado encontrado no banco.")
+        print("Nenhum dado encontrado no banco.")
         return
 
     df = pd.DataFrame(dados)
@@ -28,8 +28,8 @@ def verificar():
     
     dias_unicos = sorted(df['dt'].dt.strftime('%d/%m/%Y').unique())
     
-    print(f"📅 Total de registros: {len(df)}")
-    print("🗓️ Dias encontrados no banco:")
+    print(f"Total de registros: {len(df)}")
+    print("Dias encontrados no banco:")
     for dia in dias_unicos:
         print(f" - {dia}")
 

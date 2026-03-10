@@ -7,36 +7,21 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from pathlib import Path
 
-# --- AJUSTE DE CAMINHO INTELIGENTE ---
-# Encontra a raiz do projeto (ai-engine-python) independente de onde você rode
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ENV_PATH = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
 
 app = FastAPI()
 
-# Mantém o CORS para o seu JavaScript (Frontend) funcionar
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Caminho absoluto para o modelo salvo pelo novo trainer
 MODEL_PATH = BASE_DIR / "models" / "modelo_cancela.pkl"
-
-try:
-    if MODEL_PATH.exists():
-        modelo = joblib.load(MODEL_PATH)
-        print("🧠 IA Carregada com Sucesso da pasta raiz!")
-    else:
-        modelo = None
-        print(f"⚠️ Erro: Arquivo não encontrado em {MODEL_PATH}")
-except Exception as e:
-    modelo = None
-    print(f"⚠️ Erro ao carregar modelo: {e}")
+modelo = joblib.load(MODEL_PATH) if MODEL_PATH.exists() else None
 
 class DadosEntrada(BaseModel):
     hora: int
@@ -45,29 +30,34 @@ class DadosEntrada(BaseModel):
 
 @app.post("/prever")
 def realizar_previsao(entrada: DadosEntrada):
-    if modelo is None: 
-        return {"status": "erro", "mensagem": "Modelo não carregado no servidor"}
-
+    if modelo is None: return {"status": "erro", "mensagem": "Modelo não carregado"}
     try:
-        # Modo Semana (Soma o dia) - Se hora for -1
         if entrada.hora == -1:
-            horas_dia = [6, 10, 14, 18, 22, 2]
+            horas_teste = [6, 10, 14, 18, 22, 2]
             total = 0
-            for h in horas_dia:
+            for h in horas_teste:
                 t = 1 if 6 <= h < 14 else 2 if 14 <= h < 22 else 3
                 df = pd.DataFrame([[h, entrada.dia_semana, t]], columns=['hora_num', 'dia_semana', 'turno'])
                 total += modelo.predict(df)[0]
             return {"fluxo_estimado": round(float(total), 2)}
 
-        # Modo Hora Individual
         df = pd.DataFrame([[entrada.hora, entrada.dia_semana, entrada.turno]], columns=['hora_num', 'dia_semana', 'turno'])
         predicao = modelo.predict(df)[0]
         return {"fluxo_estimado": round(float(predicao), 2)}
-
     except Exception as e:
         return {"status": "erro", "mensagem": str(e)}
 
+@app.get("/prever_dia_completo")
+def prever_dia_completo(dia: int):
+    if modelo is None: return []
+    resultados = []
+    for h in range(0, 24, 2):
+        t = 1 if 6 <= h < 14 else 2 if 14 <= h < 22 else 3
+        df = pd.DataFrame([[h, dia, t]], columns=['hora_num', 'dia_semana', 'turno'])
+        pred = modelo.predict(df)[0]
+        resultados.append({"hora": f"{h:02d}:00", "fluxo": round(float(pred), 1)})
+    return resultados
+
 if __name__ == "__main__":
     import uvicorn
-    # Roda na porta 8000
     uvicorn.run(app, host="0.0.0.0", port=8000)

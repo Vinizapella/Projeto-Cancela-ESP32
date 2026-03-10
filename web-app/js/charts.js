@@ -13,7 +13,7 @@ function inicializarGraficos() {
     meuGraficoLinha = new Chart(ctxLinha, {
         type: 'line',
         data: {
-            labels: ['06:00', '10:00', '14:00', '18:00', '22:00', '02:00'],
+            labels: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'],
             datasets: [
                 {
                     label: 'Entradas (IA)',
@@ -112,18 +112,18 @@ function inicializarGraficos() {
    ============================================== */
 async function buscarPrevisoesIA(periodo = 'amanha') {
     const hoje = new Date();
-    let novasLabels;
+    let labelsLinha;
     let endpoints = [];
 
     if (periodo === 'proxima-semana') {
-        novasLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+        labelsLinha = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
         endpoints = [0, 1, 2, 3, 4, 5, 6].map(d => ({ hora: -1, dia: d })); 
     } else {
-        novasLabels = ['06:00', '10:00', '14:00', '18:00', '22:00', '02:00'];
+        labelsLinha = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
         let d = new Date();
         d.setDate(hoje.getDate() + 1);
         const diaSimulado = d.getDay();
-        endpoints = [6, 10, 14, 18, 22, 2].map(h => ({ hora: h, dia: diaSimulado }));
+        endpoints = [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22].map(h => ({ hora: h, dia: diaSimulado }));
     }
 
     try {
@@ -140,47 +140,41 @@ async function buscarPrevisoesIA(periodo = 'amanha') {
         );
 
         const resultados = await Promise.all(promessas);
-        const dadosEntradas = resultados.map(r => r.fluxo_estimado || 0);
-        const dadosSaidas = dadosEntradas.map(v => Math.round(v * 0.75));
+        const dadosEntradasFull = resultados.map(r => r.fluxo_estimado || 0);
+        const dadosSaidasFull = dadosEntradasFull.map(v => Math.round(v * 0.75));
 
         if (meuGraficoLinha) {
-            meuGraficoLinha.data.labels = novasLabels;
-            meuGraficoLinha.data.datasets[0].data = dadosEntradas;
-            meuGraficoLinha.data.datasets[1].data = dadosSaidas;
-            meuGraficoLinha.data.datasets[0].pointRadius = dadosEntradas.map(() => 7);
-            meuGraficoLinha.data.datasets[1].pointRadius = dadosSaidas.map(() => 7);
+            meuGraficoLinha.data.labels = labelsLinha;
+            meuGraficoLinha.data.datasets[0].data = dadosEntradasFull;
+            meuGraficoLinha.data.datasets[1].data = dadosSaidasFull;
             meuGraficoLinha.update();
         }
 
         if (meuGraficoBarra) {
-            meuGraficoBarra.data.labels = novasLabels;
-            meuGraficoBarra.data.datasets[0].data = dadosEntradas;
+            if (periodo === 'proxima-semana') {
+                meuGraficoBarra.data.labels = labelsLinha;
+                meuGraficoBarra.data.datasets[0].data = dadosEntradasFull;
+            } else {
+                meuGraficoBarra.data.labels = ['06h', '10h', '14h', '18h', '22h', '02h'];
+                const dadosReduzidos = [
+                    dadosEntradasFull[3], dadosEntradasFull[5], dadosEntradasFull[7], 
+                    dadosEntradasFull[9], dadosEntradasFull[11], dadosEntradasFull[1]
+                ];
+                meuGraficoBarra.data.datasets[0].data = dadosReduzidos;
+            }
             meuGraficoBarra.update();
         }
 
-        const fluxoTotal = dadosEntradas.reduce((a, b) => a + b, 0);
+        const fluxoTotal = dadosEntradasFull.reduce((a, b) => a + b, 0);
 
         if (meuGraficoPizza) {
             meuGraficoPizza.data.datasets[0].data = [Math.round(fluxoTotal * 0.8), Math.round(fluxoTotal * 0.2)];
             meuGraficoPizza.update();
         }
 
-        const elEntradas = document.getElementById('vagas-count');
-        const elSaidas = document.getElementById('eventos-count');
-        if (elEntradas) elEntradas.innerText = Math.round(fluxoTotal);
-        if (elSaidas) elSaidas.innerText = Math.round(fluxoTotal * 0.75);
+        document.getElementById('vagas-count').innerText = Math.round(fluxoTotal);
+        document.getElementById('eventos-count').innerText = Math.round(fluxoTotal * 0.75);
 
-        if (periodo !== 'proxima-semana') {
-            const turnosMap = {
-                'turno-manha': dadosEntradas[0],
-                'turno-tarde': dadosEntradas[2],
-                'turno-noite': dadosEntradas[4]
-            };
-            Object.keys(turnosMap).forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.innerText = Math.round(turnosMap[id] || 0);
-            });
-        }
     } catch (error) {
         console.error("Erro na IA:", error);
     }
@@ -203,7 +197,6 @@ function configurarFiltrosTurno() {
         btn.onclick = () => {
             const estaAtivo = btn.classList.contains('active');
 
-            // Resetar todos os botões
             Object.keys(botoes).forEach(b => {
                 const bEl = document.getElementById(b);
                 if (bEl) {
@@ -217,7 +210,6 @@ function configurarFiltrosTurno() {
                 btn.classList.remove('btn-inactive');
                 filtrarInterfacePorTurno(botoes[id]);
             } else {
-                // Ao desativar, recarrega o total do período atual
                 buscarPrevisoesIA(periodosTexto[indiceAtual] === "Amanhã" ? "amanha" : "proxima-semana");
             }
         };
@@ -233,11 +225,9 @@ function filtrarInterfacePorTurno(indice) {
     const valorEntrada = meuGraficoLinha.data.datasets[0].data[indice];
     const valorSaida = meuGraficoLinha.data.datasets[1].data[indice];
 
-    // Atualiza contadores superiores
     document.getElementById('vagas-count').innerText = Math.round(valorEntrada);
     document.getElementById('eventos-count').innerText = Math.round(valorSaida);
 
-    // --- CORREÇÃO DA PIZZA POR TURNO ---
     if (meuGraficoPizza) {
         const carros = Math.round(valorEntrada * 0.8);
         const caminhoes = Math.round(valorEntrada * 0.2);
@@ -245,7 +235,6 @@ function filtrarInterfacePorTurno(indice) {
         meuGraficoPizza.update();
     }
 
-    // Destaque visual no gráfico de linha (apenas o ponto do turno cresce)
     meuGraficoLinha.data.datasets[0].pointRadius = meuGraficoLinha.data.datasets[0].data.map((_, i) => i === indice ? 12 : 0);
     meuGraficoLinha.data.datasets[1].pointRadius = meuGraficoLinha.data.datasets[1].data.map((_, i) => i === indice ? 12 : 0);
     meuGraficoLinha.update();
