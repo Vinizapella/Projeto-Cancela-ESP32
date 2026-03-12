@@ -28,7 +28,7 @@ def gerar_fluxo_completo(total_dias=14):
             {"h": 23, "m": 24, "vol": 350}  
         ]
 
-        print(f"🚀 Iniciando geração de dados para {total_dias} dias...")
+        print(f"Iniciando geração de dados para {total_dias} dias...")
 
         atual = data_inicial
         while atual <= agora:
@@ -72,7 +72,7 @@ def gerar_fluxo_completo(total_dias=14):
 
             atual += timedelta(days=1)
 
-        print("\n✨ Banco de dados populado com sucesso!")
+        print("\nBanco de dados populado com sucesso!")
 
     except Exception as e:
         print(f"Erro crítico: {e}")
