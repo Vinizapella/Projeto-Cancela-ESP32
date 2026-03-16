@@ -1,18 +1,35 @@
 import os
 import joblib
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 from pathlib import Path
 import numpy as np
 
+# Configuração de caminhos e ambiente
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 ENV_PATH = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
 
-app = FastAPI()
+# Inicialização do FastAPI com metadados para o Swagger
+app = FastAPI(
+    title="Motor de IA - Predição de Cancela",
+    description="""
+    API para estimativa e análise de fluxo de veículos utilizando o modelo **Random Forest Regressor**.
+    
+    ### Funcionalidades:
+    * **Predição Pontual**: Estime o fluxo para uma hora e dia específicos.
+    * **Análise Diária**: Gere uma lista de previsões para as 24h de um dia.
+    * **Estatísticas**: Obtenha métricas gerais do comportamento do modelo.
+    """,
+    version="1.0.0",
+    contact={
+        "name": "Vinicius dos Santos Zapella",
+        "email": "vinicius_zapella@estudante.sesisenai.org.br",
+    }
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,21 +38,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Carregamento do Modelo
 MODEL_PATH = BASE_DIR / "models" / "modelo_cancela.pkl"
 modelo = joblib.load(MODEL_PATH) if MODEL_PATH.exists() else None
 
+# Esquema de Dados com exemplos para o Swagger
 class DadosEntrada(BaseModel):
-    hora: int
-    dia_semana: int
-    turno: int
+    hora: int = Field(..., ge=-1, le=23, example=8, description="Hora do dia (0-23). Use -1 para cálculo de fluxo total estimado.")
+    dia_semana: int = Field(..., ge=0, le=6, example=0, description="Dia da semana (0=Segunda, 6=Domingo).")
+    turno: int = Field(..., ge=1, le=3, example=1, description="Turno de trabalho: 1 (Manhã), 2 (Tarde), 3 (Noite).")
 
 def get_turno(h: int):
     if 5 <= h < 14: return 1
     elif 14 <= h < 23: return 2
     else: return 3
 
-@app.post("/prever")
+
+@app.post("/prever", tags=["Previsão"], summary="Realizar predição de fluxo")
 def realizar_previsao(entrada: DadosEntrada):
+    """
+    **Calcula a estimativa de veículos:**
+    - Se a hora enviada for **-1**, o sistema realiza uma amostragem de 12 períodos para estimar o fluxo acumulado.
+    - Se for uma hora válida (**0-23**), retorna a predição exata do modelo Random Forest.
+    """
     if modelo is None: 
         return {"status": "erro", "mensagem": "Modelo não carregado"}
     try:
@@ -55,8 +80,14 @@ def realizar_previsao(entrada: DadosEntrada):
     except Exception as e:
         return {"status": "erro", "mensagem": str(e)}
 
-@app.get("/prever_dia_completo")
-def prever_dia_completo(dia: int):
+@app.get("/prever_dia_completo", tags=["Análise"], summary="Prever fluxo para as 24 horas")
+def prever_dia_completo(
+    dia: int = Query(..., ge=0, le=6, description="Dia da semana para gerar o gráfico (0-6)")
+):
+    """
+    Gera uma série temporal de 24 pontos (uma para cada hora) para o dia selecionado. 
+    Ideal para construção de **gráficos de linha** no frontend.
+    """
     if modelo is None: 
         return []
     resultados = []
@@ -70,8 +101,12 @@ def prever_dia_completo(dia: int):
         })
     return resultados
 
-@app.get("/estatisticas")
+@app.get("/estatisticas", tags=["Análise"], summary="Obter métricas do modelo")
 def obter_estatisticas():
+    """
+    Retorna métricas descritivas baseadas em todas as combinações possíveis de horários e dias.
+    Útil para entender os limites de operação (mínimo, máximo e média).
+    """
     if modelo is None:
         return {"erro": "Modelo não carregado"}
     
