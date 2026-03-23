@@ -28,7 +28,6 @@ def treinar_modelo():
         
         df['dt'] = pd.to_datetime(df['data'], format='ISO8601', utc=True).dt.tz_convert('America/Sao_Paulo')
         
-        # Extrair features
         df['hora_num'] = df['dt'].dt.hour
         df['dia_semana'] = df['dt'].dt.dayofweek
         df['minuto'] = df['dt'].dt.minute 

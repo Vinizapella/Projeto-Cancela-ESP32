@@ -185,11 +185,20 @@ async function buscarPrevisoesIA(periodo = 'amanha') {
                     dia_semana: p.dia,
                     turno: (p.hora >= 5 && p.hora < 14) ? 1 : (p.hora >= 14 && p.hora < 23) ? 2 : 3
                 })
-            }).then(res => res.json())
+            }).then(async res => {
+                if (!res.ok) {
+                    const erroData = await res.json().catch(() => ({ detail: "Erro desconhecido na API" }));
+                    throw new Error(`[Erro ${res.status}] ${erroData.detail || 'Falha na comunicação'}`);
+                }
+                return res.json();
+            })
         );
 
         const resultados = await Promise.all(promessas);
         
+        // ==============================================
+        // PREENCHIMENTO DOS GRÁFICOS
+        // ==============================================
         if (periodo === 'proxima-semana') {
             const dadosPorDia = resultados.map(r => Math.max(0, r.fluxo_estimado || 0));
             dadosEntradasAtuais = dadosPorDia;
@@ -217,7 +226,8 @@ async function buscarPrevisoesIA(periodo = 'amanha') {
 
             document.getElementById('vagas-count').innerText = Math.round(fluxoTotal);
             document.getElementById('eventos-count').innerText = Math.round(fluxoTotal * 0.75);
-        } else {
+
+        } else { 
             const dadosEntradasFull = resultados.map(r => Math.max(0, r.fluxo_estimado || 0));
             const dadosSaidasFull = dadosEntradasFull.map(v => Math.round(v * 0.75));
             
@@ -254,7 +264,9 @@ async function buscarPrevisoesIA(periodo = 'amanha') {
         }
 
     } catch (error) {
-        console.error("Erro na IA:", error);
+        console.error("Falha ao consultar a API de IA:", error.message);
+        
+        alert(`Não foi possível carregar os dados preditivos.\nMotivo: ${error.message}`);
     }
 }
 

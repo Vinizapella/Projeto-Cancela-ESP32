@@ -17,26 +17,26 @@ ENV_PATH = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
 
 # =============================================================
-# MODELOS DE DADOS PARA O SWAGGER
+# MODELOS DE DADOS PARA O SWAGGER 
 # =============================================================
 class DadosEntrada(BaseModel):
-    hora: int = Field(..., ge=-1, le=23, example=8, description="Hora do dia (0-23). Use -1 para cálculo de fluxo total acumulado")
-    dia_semana: int = Field(..., ge=0, le=6, example=0, description="Dia da semana (0=Segunda, 6=Domingo)")
-    turno: int = Field(..., ge=1, le=3, example=1, description="Turno: 1 (Manhã), 2 (Tarde), 3 (Noite)")
+    hora: int = Field(..., ge=-1, le=23, examples=[8], description="Hora do dia (0-23). Use -1 para cálculo de fluxo total acumulado.")
+    dia_semana: int = Field(..., ge=0, le=6, examples=[0], description="Dia da semana (0=Segunda, 6=Domingo).")
+    turno: int = Field(..., ge=1, le=3, examples=[1], description="Turno: 1 (Manhã), 2 (Tarde), 3 (Noite).")
 
 class PrevisaoResponse(BaseModel):
-    fluxo_estimado: float = Field(..., example=45.2)
+    fluxo_estimado: float = Field(..., examples=[45.2], description="Quantidade estimada de veículos.")
 
 class DetalheDia(BaseModel):
-    hora: str = Field(..., example="08:00")
-    fluxo: float = Field(..., example=12.5)
+    hora: str = Field(..., examples=["08:00"], description="Horário formatado.")
+    fluxo: float = Field(..., examples=[12.5], description="Fluxo estimado para o horário.")
 
 class EstatisticasResponse(BaseModel):
-    min: float
-    max: float
-    media: float
-    mediana: float
-    desvio_padrao: float
+    min: float = Field(..., examples=[2.1], description="Menor fluxo previsto.")
+    max: float = Field(..., examples=[120.5], description="Maior fluxo previsto.")
+    media: float = Field(..., examples=[45.3], description="Média aritmética dos fluxos.")
+    mediana: float = Field(..., examples=[42.0], description="Valor central das predições.")
+    desvio_padrao: float = Field(..., examples=[15.8], description="Desvio padrão dos dados preditos.")
 
 # =============================================================
 # INICIALIZAÇÃO DA API
@@ -47,7 +47,8 @@ app = FastAPI(
     API para estimativa e análise de fluxo de veículos utilizando o modelo **Random Forest**.
     
     ### Documentação de Integração:
-    Esta API fornece os dados preditivos para o Dashboard em JavaScript
+    Esta API fornece os dados preditivos para o Dashboard em JavaScript. 
+    Lida com predições pontuais, séries temporais e estatísticas globais do modelo.
     """,
     version="1.0.0",
     contact={
@@ -88,15 +89,21 @@ def get_turno(h: int):
 @app.post("/prever", 
           tags=["Previsão"], 
           summary="Realizar predição de fluxo",
-          response_model=PrevisaoResponse)
+          response_model=PrevisaoResponse,
+          responses={
+              200: {"description": "Predição calculada com sucesso."},
+              400: {"description": "Erro de Lógica: Erro interno durante o cálculo do modelo de ML."},
+              422: {"description": "Erro de Validação: Dados enviados fora das regras estipuladas no JSON (ex: hora 25)."},
+              500: {"description": "Erro Crítico: Modelo preditivo .pkl não encontrado no servidor."}
+          })
 def realizar_previsao(entrada: DadosEntrada):
     """
-    **Calcula a estimativa de veiculos:**
-    - Se a hora for **-1**, realiza uma amostragem de 12 periodos para estimar o fluxo acumulado do dia
-    - Se for uma hora valida (**0-23**), retorna a predição exata do modelo
+    **Calcula a estimativa de veículos:**
+    - Se a hora for **-1**, realiza uma amostragem de 12 períodos para estimar o fluxo acumulado do dia.
+    - Se for uma hora válida (**0-23**), retorna a predição exata do modelo.
     """
     if modelo is None: 
-        raise HTTPException(status_code=500, detail="Modelo preditivo não encontrado no servidor")
+        raise HTTPException(status_code=500, detail="Modelo preditivo não encontrado no servidor.")
     
     try:
         if entrada.hora == -1:
@@ -113,20 +120,27 @@ def realizar_previsao(entrada: DadosEntrada):
         predicao = modelo.predict(df)[0]
         return {"fluxo_estimado": round(float(max(0, predicao)), 2)}  
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=f"Erro ao calcular predição: {str(e)}")
+
 
 @app.get("/prever_dia_completo", 
          tags=["Análise"], 
          summary="Prever fluxo para as 24 horas",
-         response_model=List[DetalheDia])
+         response_model=List[DetalheDia],
+         responses={
+             200: {"description": "Série temporal gerada com sucesso."},
+             422: {"description": "Erro de Validação: Parâmetro 'dia' ausente ou inválido na URL."},
+             500: {"description": "Erro Crítico: Modelo preditivo .pkl não encontrado no servidor."}
+         })
 def prever_dia_completo(
-    dia: int = Query(..., ge=0, le=6, description="Dia da semana (0-6)")
+    dia: int = Query(..., ge=0, le=6, description="Dia da semana (0=Segunda, 6=Domingo)")
 ):
     """
-    Gera uma serie temporal de 24 pontos. Util para o componente de **Gráfico de Linhas** do Frontend
+    Gera uma série temporal completa de 24 pontos (um para cada hora do dia).
+    Útil para preencher o componente de **Gráfico de Linhas** do Dashboard no Frontend.
     """
     if modelo is None: 
-        return []
+        raise HTTPException(status_code=500, detail="Modelo preditivo não encontrado no servidor.")
     
     resultados = []
     for h in range(0, 24): 
@@ -139,13 +153,19 @@ def prever_dia_completo(
         })
     return resultados
 
+
 @app.get("/estatisticas", 
          tags=["Análise"], 
          summary="Obter métricas do modelo",
-         response_model=EstatisticasResponse)
+         response_model=EstatisticasResponse,
+         responses={
+             200: {"description": "Estatísticas geradas com sucesso."},
+             500: {"description": "Erro Crítico: Modelo preditivo .pkl não encontrado no servidor."}
+         })
 def obter_estatisticas():
     """
-    Retorna metricas descritivas (min, max, media) baseadas em todas as combinações de horarios
+    Retorna métricas descritivas globais (Mínimo, Máximo, Média, Mediana e Desvio Padrão) 
+    baseadas na predição de todas as combinações possíveis de horários e dias da semana.
     """
     if modelo is None:
         raise HTTPException(status_code=500, detail="Modelo não carregado.")
@@ -165,6 +185,7 @@ def obter_estatisticas():
         "mediana": float(np.median(preds)),
         "desvio_padrao": float(np.std(preds))
     }
+
 
 if __name__ == "__main__":
     import uvicorn
